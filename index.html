@@ -4,44 +4,35 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>실손의료보험 세대별 계산기 & 변천사 대시보드</title>
-    <!-- Google Fonts: Inter & Outfit for modern typography -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            /* Design Tokens: Vibrant HSL Tailored Palettes */
-            --primary-hue: 220;
-            --primary: hsl(var(--primary-hue), 85%, 57%);
-            --primary-hover: hsl(var(--primary-hue), 85%, 47%);
-            --primary-light: hsl(var(--primary-hue), 85%, 96%);
-            
-            --bg-color: #0b0f19;
-            --surface-color: rgba(22, 29, 49, 0.7);
-            --surface-border: rgba(255, 255, 255, 0.08);
-            --text-main: #f3f4f6;
-            --text-muted: #9ca3af;
-            
-            --success: #10b981;
+            --bg-main: #0f172a;
+            --bg-card: #1e293b;
+            --border-color: #334155;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --primary: #6366f1;
+            --primary-hover: #4f46e5;
             --warning: #f59e0b;
+            --success: #10b981;
             --danger: #ef4444;
-            --info: #3b82f6;
-
-            --card-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            --card-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -4px rgba(0, 0, 0, 0.3);
             --font-main: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            --font-display: 'Outfit', sans-serif;
-            --transition-speed: 0.3s;
         }
 
         [data-theme="light"] {
-            --bg-color: #f8fafc;
-            --surface-color: rgba(255, 255, 255, 0.8);
-            --surface-border: rgba(0, 0, 0, 0.08);
+            --bg-main: #f8fafc;
+            --bg-card: #ffffff;
+            --border-color: #e2e8f0;
             --text-main: #0f172a;
             --text-muted: #64748b;
-            --primary-light: hsl(var(--primary-hue), 85%, 92%);
-            --card-shadow: 0 8px 32px 0 rgba(148, 163, 184, 0.15);
+            --primary: #4f46e5;
+            --primary-hover: #4338ca;
+            --warning: #d97706;
+            --success: #059669;
+            --danger: #dc2626;
+            --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
         }
 
         * {
@@ -51,141 +42,121 @@
         }
 
         body {
-            font-family: var(--font-main);
-            background-color: var(--bg-color);
+            background-color: var(--bg-main);
             color: var(--text-main);
-            line-height: 1.6;
-            padding: 2rem 1.5rem;
-            min-height: 100vh;
-            transition: background-color var(--transition-speed), color var(--transition-speed);
+            font-family: var(--font-main);
+            line-height: 1.5;
+            transition: background-color 0.3s, color 0.3s;
+            padding: 2rem 1rem;
         }
-
-        /* Glassmorphism Container */
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
+        .na-badge {
+            font-size: 0.75rem;
+            color: var(--danger) !important;
+            font-weight: 700;
+            margin-left: 0.5rem;
+            background: rgba(239, 68, 68, 0.1);
+            padding: 0.1rem 0.4rem;
+            border-radius: 4px;
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            display: inline-block;
+        }
+        input:disabled, select:disabled {
+            background-color: rgba(255, 255, 255, 0.03) !important;
+            border-color: rgba(239, 68, 68, 0.2) !important;
+            color: var(--text-muted) !important;
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+        [data-theme="light"] input:disabled, [data-theme="light"] select:disabled {
+            background-color: rgba(0, 0, 0, 0.03) !important;
         }
 
         header {
+            max-width: 1200px;
+            margin: 0 auto 2rem auto;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 2.5rem;
-            border-bottom: 1px solid var(--surface-border);
-            padding-bottom: 1.5rem;
+            flex-wrap: wrap;
+            gap: 1rem;
         }
 
-        .header-title h1 {
-            font-family: var(--font-display);
-            font-size: 2.2rem;
+        h1 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 2.25rem;
             font-weight: 800;
-            background: linear-gradient(135deg, var(--primary), #8b5cf6);
+            background: linear-gradient(135deg, var(--primary), #a78bfa);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            margin-bottom: 0.5rem;
         }
 
-        .header-title p {
-            color: var(--text-muted);
-            font-size: 0.95rem;
+        .header-controls {
+            display: flex;
+            gap: 0.75rem;
+            align-items: center;
         }
 
-        /* Interactive Theme Toggle */
-        .theme-toggle {
-            background: var(--surface-color);
-            border: 1px solid var(--surface-border);
-            padding: 0.6rem 1.2rem;
-            border-radius: 50px;
+        .theme-btn {
+            background: var(--bg-card);
             color: var(--text-main);
+            border: 1px solid var(--border-color);
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
             cursor: pointer;
             font-weight: 600;
+            transition: all 0.2s;
             display: flex;
             align-items: center;
             gap: 0.5rem;
-            transition: all var(--transition-speed);
-            box-shadow: var(--card-shadow);
         }
 
-        .theme-toggle:hover {
-            transform: translateY(-2px);
+        .theme-btn:hover {
             border-color: var(--primary);
         }
 
-        /* Modern Tabs Navigation */
+        /* Tabs Navigation */
         .tabs {
             display: flex;
             gap: 0.5rem;
-            background: var(--surface-color);
-            border: 1px solid var(--surface-border);
-            padding: 0.4rem;
-            border-radius: 12px;
-            margin-bottom: 2rem;
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            box-shadow: var(--card-shadow);
+            border-bottom: 2px solid var(--border-color);
+            max-width: 1200px;
+            margin: 0 auto 2rem auto;
+            padding-bottom: 0.5rem;
         }
 
         .tab-btn {
-            flex: 1;
-            padding: 0.8rem 1.5rem;
+            background: none;
             border: none;
-            background: transparent;
             color: var(--text-muted);
-            font-weight: 600;
+            padding: 0.75rem 1.5rem;
             font-size: 1rem;
-            border-radius: 8px;
+            font-weight: 600;
             cursor: pointer;
-            transition: all var(--transition-speed);
-            text-align: center;
+            border-radius: 8px;
+            transition: all 0.2s;
         }
 
         .tab-btn:hover {
             color: var(--text-main);
+            background: rgba(99, 102, 241, 0.1);
         }
 
         .tab-btn.active {
-            background: var(--primary);
             color: white;
-            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+            background: var(--primary);
         }
 
+        /* Container layouts */
         .tab-content {
             display: none;
-            animation: fadeIn 0.4s ease-in-out;
+            max-width: 1200px;
+            margin: 0 auto;
         }
 
         .tab-content.active {
             display: block;
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* Glassmorphism Card Style */
-        .card {
-            background: var(--surface-color);
-            border: 1px solid var(--surface-border);
-            border-radius: 16px;
-            padding: 2rem;
-            margin-bottom: 2rem;
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            box-shadow: var(--card-shadow);
-        }
-
-        .card h2 {
-            font-family: var(--font-display);
-            font-size: 1.4rem;
-            margin-bottom: 1.5rem;
-            display: flex;
-            align-items: center;
-            gap: 0.6rem;
-            color: var(--primary);
-        }
-
-        /* Calculator Layout grid */
         .grid-calc {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -198,57 +169,81 @@
             }
         }
 
-        .form-group {
-            margin-bottom: 1.2rem;
+        /* Cards and Elements */
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: var(--card-shadow);
+            transition: all 0.3s;
         }
 
-        label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-weight: 600;
-            font-size: 0.9rem;
-            color: var(--text-main);
+        h2 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
 
-        select, input[type="number"], input[type="text"] {
-            width: 100%;
-            padding: 0.8rem 1rem;
-            background: rgba(0, 0, 0, 0.2);
-            border: 1px solid var(--surface-border);
-            border-radius: 8px;
-            color: var(--text-main);
-            font-size: 1rem;
-            outline: none;
-            transition: all var(--transition-speed);
-        }
-
-        select:focus, input[type="number"]:focus {
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+        h2 span {
+            font-size: 1.75rem;
         }
 
         .sub-block-title {
-            font-size: 1rem;
+            font-size: 1.1rem;
             font-weight: 700;
-            margin: 1.5rem 0 1rem 0;
-            padding-bottom: 0.4rem;
-            border-bottom: 1px dashed var(--surface-border);
-            color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
+            color: var(--primary);
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 0.5rem;
+            margin-top: 1.5rem;
+            margin-bottom: 1rem;
         }
 
-        /* Switch Toggle */
-        .switch-container {
+        .form-group {
+            margin-bottom: 1.25rem;
             display: flex;
-            align-items: center;
-            justify-content: space-between;
-            background: rgba(0,0,0,0.15);
-            padding: 0.8rem 1rem;
-            border-radius: 8px;
-            border: 1px solid var(--surface-border);
+            flex-direction: column;
+            gap: 0.5rem;
         }
 
+        .form-group.switch-container {
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(99, 102, 241, 0.05);
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            border: 1px dashed var(--border-color);
+            margin-top: 1rem;
+        }
+
+        label {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-main);
+        }
+
+        input[type="number"], select {
+            width: 100%;
+            background: var(--bg-main);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.2s;
+            outline: none;
+        }
+
+        input[type="number"]:focus, select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+        }
+
+        /* Toggle switch */
         .switch {
             position: relative;
             display: inline-block;
@@ -269,7 +264,7 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background-color: #4b5563;
+            background-color: #cbd5e1;
             transition: .4s;
             border-radius: 34px;
         }
@@ -294,69 +289,85 @@
             transform: translateX(24px);
         }
 
-        /* Result Panel Styling */
+        /* Results Panel */
         .result-panel {
-            background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(139, 92, 246, 0.15));
-            border: 1px solid rgba(59, 130, 246, 0.2);
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
             border-radius: 16px;
             padding: 2rem;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
+            box-shadow: var(--card-shadow);
         }
 
         .result-row {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 0.8rem 0;
-            border-bottom: 1px solid var(--surface-border);
+            padding: 0.75rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
         }
 
-        .result-row:last-child {
-            border-bottom: none;
+        [data-theme="light"] .result-row {
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
         }
 
         .result-label {
-            font-weight: 500;
+            font-size: 0.95rem;
             color: var(--text-muted);
+            font-weight: 500;
         }
 
         .result-value {
-            font-weight: 700;
             font-size: 1.1rem;
-        }
-
-        .result-total {
-            margin-top: 1.5rem;
-            padding-top: 1.5rem;
-            border-top: 2px solid rgba(59, 130, 246, 0.3);
-            display: flex;
-            justify-content: space-between;
-            align-items: baseline;
-        }
-
-        .result-total .result-label {
-            font-size: 1.2rem;
             font-weight: 700;
             color: var(--text-main);
         }
 
-        .result-total .result-value {
-            font-size: 2.2rem;
-            font-family: var(--font-display);
+        .result-total {
+            background: rgba(99, 102, 241, 0.08);
+            border-radius: 12px;
+            padding: 1.25rem;
+            margin-top: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .result-total .result-label {
+            font-size: 1.1rem;
+            font-weight: 700;
             color: var(--primary);
         }
 
-        /* Interactive Reference Table */
-        .search-box {
-            margin-bottom: 1.5rem;
+        .result-total .result-value {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--primary);
         }
 
+        /* Charts */
+        .chart-box {
+            height: 200px;
+            margin-top: 2rem;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            background: var(--bg-main);
+            padding: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Tables styling */
         .table-container {
+            width: 100%;
             overflow-x: auto;
-            border-radius: 8px;
-            border: 1px solid var(--surface-border);
+            margin-top: 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            background: var(--bg-main);
         }
 
         table {
@@ -367,42 +378,62 @@
         }
 
         th, td {
-            padding: 1rem 1.2rem;
-            border-bottom: 1px solid var(--surface-border);
+            padding: 1rem;
+            border-bottom: 1px solid var(--border-color);
         }
 
         th {
-            background-color: rgba(0, 0, 0, 0.3);
+            background: rgba(255, 255, 255, 0.02);
+            color: var(--text-main);
             font-weight: 700;
-            color: var(--primary);
-            white-space: nowrap;
         }
 
-        tr:hover {
-            background-color: rgba(255, 255, 255, 0.02);
+        [data-theme="light"] th {
+            background: rgba(0, 0, 0, 0.02);
+        }
+
+        tr:last-child td {
+            border-bottom: none;
         }
 
         .badge {
             display: inline-block;
             padding: 0.25rem 0.5rem;
-            border-radius: 4px;
+            border-radius: 6px;
             font-size: 0.75rem;
             font-weight: 700;
             text-transform: uppercase;
         }
 
-        .badge-success { background-color: rgba(16, 185, 129, 0.2); color: #34d399; }
-        .badge-warning { background-color: rgba(245, 158, 11, 0.2); color: #fbbf24; }
-        .badge-danger { background-color: rgba(239, 68, 68, 0.2); color: #f87171; }
-
-        /* Dynamic SVG Chart */
-        .chart-box {
-            height: 240px;
-            margin-top: 1.5rem;
-            position: relative;
+        .badge-success {
+            background: rgba(16, 185, 129, 0.15);
+            color: var(--success);
         }
 
-        /* Case Studies Grid */
+        .badge-warning {
+            background: rgba(245, 158, 11, 0.15);
+            color: var(--warning);
+        }
+
+        .search-box {
+            margin-bottom: 1.5rem;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            outline: none;
+            font-size: 1rem;
+        }
+
+        .search-box input:focus {
+            border-color: var(--primary);
+        }
+
         .case-studies-grid {
             display: grid;
             grid-template-columns: 1fr;
@@ -410,42 +441,41 @@
         }
 
         .case-header {
-            background: rgba(0, 0, 0, 0.2);
-            padding: 1rem;
-            border-radius: 8px;
-            font-weight: 600;
-            margin-bottom: 1rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 1rem;
+            margin-bottom: 1rem;
         }
 
         .mismatch-highlight {
+            font-size: 0.85rem;
             color: var(--warning);
-            font-size: 0.8rem;
-            margin-top: 0.5rem;
-            font-style: italic;
+            background: rgba(245, 158, 11, 0.08);
+            border-left: 3px solid var(--warning);
+            padding: 0.75rem 1rem;
+            border-radius: 4px;
+            margin-top: 1rem;
+            font-weight: 500;
         }
     </style>
 </head>
 <body>
 
-<div class="container">
     <header>
-        <div class="header-title">
-            <h1>실손의료비 세대별 계산기 및 변천사</h1>
-            <p>1세대부터 5세대까지의 보장 한도, 공제 비율 및 지급액 실시간 분석 시스템</p>
+        <h1>실손의료보험 세대별 계산기</h1>
+        <div class="header-controls">
+            <button class="theme-btn" id="theme-btn" onclick="toggleTheme()">
+                <span>🌙</span> Dark Mode
+            </button>
         </div>
-        <button class="theme-toggle" id="theme-btn" onclick="toggleTheme()">
-            <span>🌙</span> Dark Mode
-        </button>
     </header>
 
-    <!-- Tab Navigation -->
     <nav class="tabs">
-        <button class="tab-btn active" onclick="switchTab('calc-tab', this)">실손의료비 계산기</button>
-        <button class="tab-btn" onclick="switchTab('case-tab', this)">검증 사례 분석</button>
-        <button class="tab-btn" onclick="switchTab('ref-tab', this)">세대별 변천사 요약표</button>
+        <button class="tab-btn active" onclick="switchTab('calc-tab', this)">실시간 계산기</button>
+        <button class="tab-btn" onclick="switchTab('case-tab', this)" style="display: none;">검증 대시보드</button>
+        <button class="tab-btn" onclick="switchTab('ref-tab', this)">약관 검색 및 레퍼런스</button>
     </nav>
 
     <!-- Tab 1: Calculator -->
@@ -468,6 +498,16 @@
                         <option value="5세대(비급여중증비중증)" selected>5세대(비급여중증비중증) (26년 4월 ~)</option>
                     </select>
                 </div>
+                <div class="form-group">
+                    <label for="institution-select">의료기관 종류 (급여 일반 통원)</label>
+                    <select id="institution-select" onchange="calculateAll()">
+                        <option value="의원" selected>의원 (본인부담률 30% / 공제 1만원)</option>
+                        <option value="병원">병원 (본인부담률 40% / 공제 1.5만원)</option>
+                        <option value="종합병원">종합병원 (본인부담률 50% / 공제 2만원)</option>
+                        <option value="상급종합병원">상급종합병원 (본인부담률 60% / 공제 2만원)</option>
+                        <option value="권역응급의료센터">권역응급의료센터 (본인부담률 90% / 공제 2만원)</option>
+                    </select>
+                </div>
 
                 <!-- Block 1: Inpatient -->
                 <div class="sub-block-title">① 입원 치료 (급여 & 비급여 중증/비중증)</div>
@@ -486,11 +526,11 @@
                     <input type="number" id="inpatient-nhi" value="5000000" step="50000" oninput="calculateAll()">
                 </div>
                 <div class="form-group">
-                    <label for="inpatient-non-nhi-serious">비급여 (중증 질환) 입원의료비 (원)</label>
+                    <label for="inpatient-non-nhi-serious">비급여 (중증 질환) 입원의료비 (원) <span id="na-inpatient-non-nhi-serious" class="na-badge" style="display:none;">해당없음</span></label>
                     <input type="number" id="inpatient-non-nhi-serious" value="3000000" step="50000" oninput="calculateAll()">
                 </div>
                 <div class="form-group">
-                    <label for="inpatient-non-nhi-general">비급여 (비중증 질환) 입원의료비 (원)</label>
+                    <label for="inpatient-non-nhi-general">비급여 (비중증 질환) 입원의료비 (원) <span id="na-inpatient-non-nhi-general" class="na-badge" style="display:none;">해당없음</span></label>
                     <input type="number" id="inpatient-non-nhi-general" value="5000000" step="50000" oninput="calculateAll()">
                 </div>
 
@@ -501,38 +541,37 @@
                     <label for="outpatient-general">급여 (일반) 외래 통원 본인부담금 (원)</label>
                     <input type="number" id="outpatient-general" value="30000" step="5000" oninput="calculateAll()">
                 </div>
+
                 <div class="form-group">
-                    <label for="institution-select">의료기관 종류 (급여 일반 통원)</label>
-                    <select id="institution-select" onchange="calculateAll()">
-                        <option value="의원" selected>의원 (본인부담률 30% / 공제 1만원)</option>
-                        <option value="병원">병원 (본인부담률 40% / 공제 1.5만원)</option>
-                        <option value="종합병원">종합병원 (본인부담률 50% / 공제 2만원)</option>
-                        <option value="상급종합병원">상급종합병원 (본인부담률 60% / 공제 2만원)</option>
-                        <option value="권역응급의료센터">권역응급의료센터 (본인부담률 90% / 공제 2만원)</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="outpatient-prescription">처방조제비 본인부담금 (원)</label>
+                    <label for="outpatient-prescription">처방조제비 본인부담금 (원) <span id="na-outpatient-prescription" class="na-badge" style="display:none;">해당없음</span></label>
                     <input type="number" id="outpatient-prescription" value="15000" step="1000" oninput="calculateAll()">
                 </div>
                 <div class="form-group">
-                    <label for="outpatient-managed">관리급여 도수치료 본인부담금 (원)</label>
+                    <label for="outpatient-managed">관리급여 도수치료 본인부담금 (원) <span id="na-outpatient-managed" class="na-badge" style="display:none;">해당없음</span></label>
                     <input type="number" id="outpatient-managed" value="41600" step="1000" oninput="calculateAll()">
+                </div>
+                <div class="form-group">
+                    <label for="outpatient-non-nhi-serious">비급여 (중증) 외래 통원비 (원) <span id="na-outpatient-non-nhi-serious" class="na-badge" style="display:none;">해당없음</span></label>
+                    <input type="number" id="outpatient-non-nhi-serious" value="0" step="10000" oninput="calculateAll()">
+                </div>
+                <div class="form-group">
+                    <label for="outpatient-non-nhi-general">비급여 (비중증) 외래 통원비 (원) <span id="na-outpatient-non-nhi-general" class="na-badge" style="display:none;">해당없음</span></label>
+                    <input type="number" id="outpatient-non-nhi-general" value="0" step="10000" oninput="calculateAll()">
                 </div>
 
                 <!-- Block 3: Special Riders -->
                 <div class="sub-block-title">③ 3대 비급여 특약 (도수/체외충격파, 주사, MRI)</div>
                 
                 <div class="form-group">
-                    <label for="rider-cost-physical">도수치료/증식치료/체외충격파 치료비 (원)</label>
+                    <label for="rider-cost-physical">도수치료/증식치료/체외충격파 치료비 (원) <span id="na-rider-cost-physical" class="na-badge" style="display:none;">해당없음</span></label>
                     <input type="number" id="rider-cost-physical" value="350000" step="10000" oninput="calculateAll()">
                 </div>
                 <div class="form-group">
-                    <label for="rider-cost-injection">비급여 주사제 치료비 (원)</label>
+                    <label for="rider-cost-injection">비급여 주사제 치료비 (원) <span id="na-rider-cost-injection" class="na-badge" style="display:none;">해당없음</span></label>
                     <input type="number" id="rider-cost-injection" value="150000" step="10000" oninput="calculateAll()">
                 </div>
                 <div class="form-group">
-                    <label for="rider-cost-mri">비급여 MRI/MRA 검사비 (원)</label>
+                    <label for="rider-cost-mri">비급여 MRI/MRA 검사비 (원) <span id="na-rider-cost-mri" class="na-badge" style="display:none;">해당없음</span></label>
                     <input type="number" id="rider-cost-mri" value="0" step="50000" oninput="calculateAll()">
                 </div>
                 
@@ -553,15 +592,15 @@
                     <div class="sub-block-title" style="margin-top:0;">상세 보장 내역</div>
                     
                     <div class="result-row">
-                        <span class="result-label">급여 입원 지급액</span>
+                        <span class="result-label">급여 입원 지급액 <small id="formula-inpatient-nhi" style="font-size:0.8rem;color:var(--text-muted);display:block;"></small></span>
                         <span class="result-value" id="res-inpatient-nhi">0원</span>
                     </div>
                     <div class="result-row">
-                        <span class="result-label">비급여(중증) 입원 지급액</span>
+                        <span class="result-label">비급여(중증) 입원 지급액 <small id="formula-inpatient-non-nhi-serious" style="font-size:0.8rem;color:var(--text-muted);display:block;"></small></span>
                         <span class="result-value" id="res-inpatient-non-nhi-serious">0원</span>
                     </div>
                     <div class="result-row">
-                        <span class="result-label">비급여(비중증) 입원 지급액</span>
+                        <span class="result-label">비급여(비중증) 입원 지급액 <small id="formula-inpatient-non-nhi-general" style="font-size:0.8rem;color:var(--text-muted);display:block;"></small></span>
                         <span class="result-value" id="res-inpatient-non-nhi-general">0원</span>
                     </div>
                     <div class="result-row">
@@ -573,16 +612,32 @@
                         <span class="result-value" id="res-outpatient-prescription">0원</span>
                     </div>
                     <div class="result-row">
-                        <span class="result-label">관리급여 도수치료 지급액</span>
+                        <span class="result-label">관리급여 도수치료 지급액 <small id="formula-outpatient-managed" style="font-size:0.8rem;color:var(--text-muted);display:block;"></small></span>
                         <span class="result-value" id="res-outpatient-managed">0원</span>
+                    </div>
+                    <div class="result-row">
+                        <span class="result-label">비급여(중증) 통원 지급액 <small id="formula-outpatient-non-nhi-serious" style="font-size:0.8rem;color:var(--text-muted);display:block;"></small></span>
+                        <span class="result-value" id="res-outpatient-non-nhi-serious">0원</span>
+                    </div>
+                    <div class="result-row">
+                        <span class="result-label">비급여(비중증) 통원 지급액 <small id="formula-outpatient-non-nhi-general" style="font-size:0.8rem;color:var(--text-muted);display:block;"></small></span>
+                        <span class="result-value" id="res-outpatient-non-nhi-general">0원</span>
                     </div>
                     <div class="result-row">
                         <span class="result-label">3대 비급여 특약 지급액 <small id="rider-detail-label" style="font-size:0.8rem;color:var(--text-muted);display:block;"></small></span>
                         <span class="result-value" id="res-rider">0원</span>
                     </div>
+                    <div class="result-row" style="border-top: 1px dashed var(--border-color); margin-top: 1rem; padding-top: 1rem;">
+                        <span class="result-label" style="font-weight: 600;">1. 총 병원비 부담액 (청구 총액)</span>
+                        <span class="result-value" id="res-total-patient-cost" style="font-weight: 700; color: var(--text-main);">0원</span>
+                    </div>
                     <div class="result-row">
-                        <span class="result-label">총 본인 자기부담금</span>
-                        <span class="result-value" id="res-total-copay" style="color:var(--warning);">0원</span>
+                        <span class="result-label" style="font-weight: 600; color: var(--primary);">2. 실손보험 지급액 (환급 총액)</span>
+                        <span class="result-value" id="res-total-payout" style="font-weight: 700; color: var(--primary);">0원</span>
+                    </div>
+                    <div class="result-total" style="background: var(--bg-card); border: 2px solid var(--warning); border-radius: 8px; padding: 1rem; margin-top: 1rem;">
+                        <span class="result-label" style="font-weight: 700; color: var(--warning);">3. 최종 실제 자기부담금 (환자 최종 부담액)</span>
+                        <span class="result-value" id="res-total-copay" style="font-weight: 800; color: var(--warning); font-size: 1.5rem;">0원</span>
                     </div>
                 </div>
 
@@ -590,11 +645,6 @@
                     <!-- Visual SVG Chart -->
                     <div class="chart-box" id="chart-container">
                         <!-- Redrawn by JS -->
-                    </div>
-
-                    <div class="result-total">
-                        <span class="result-label">최종 지급 보험금</span>
-                        <span class="result-value" id="res-total-payout">0원</span>
                     </div>
                 </div>
             </section>
@@ -629,9 +679,6 @@
                         </tbody>
                     </table>
                 </div>
-                <p class="mismatch-highlight">
-                    ※ 5세대의 경우 공식 교육자료상의 2,080원 표기는 원자료의 오타(단순 역산 산술 오류)로 밝혀졌으며, 정확한 파라미터 적용 시 1,800원 지급이 산식상 올바른 결과입니다.
-                </p>
             </div>
 
             <!-- Case Study 2 Card -->
@@ -666,6 +713,36 @@
                     </table>
                 </div>
             </div>
+
+            <!-- Test Suite Card -->
+            <div class="card" style="grid-column: span 2; margin-top: 1.5rem;">
+                <div class="case-header">
+                    <h3>🔍 종합 한도 및 예외 케이스 자가 검증 테스터</h3>
+                    <button class="tab-btn" onclick="runSelfTests()" style="padding: 0.5rem 1rem; font-size: 0.9rem; background: var(--primary); color: white; border-radius: 6px; border: none; cursor: pointer;">자가 테스트 실행</button>
+                </div>
+                <p style="margin-bottom:1rem; color:var(--text-muted);">
+                    입원/통원 한도 초과, 5세대 면책/비중증 규정 등 10개 핵심 극단 케이스에 대해 산출 결과를 자동 검증합니다.
+                </p>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>번호</th>
+                                <th>테스트 시나리오 (입력 조건)</th>
+                                <th>대상 세대</th>
+                                <th>기대 지급액</th>
+                                <th>실제 계산액</th>
+                                <th>결과</th>
+                            </tr>
+                        </thead>
+                        <tbody id="test-tbody">
+                            <tr>
+                                <td colspan="6" style="text-align:center; color:var(--text-muted);">위의 "자가 테스트 실행" 버튼을 클릭하면 실시간 검증이 시작됩니다.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
     </section>
 
@@ -690,10 +767,9 @@
             </div>
         </div>
     </section>
-</div>
 
-<script>
-    // Insurance calculation criteria database
+    <script>
+    // Configuration Object
     const criteria = {
         "1세대": {
             inpatient: { nhi_rate: 1.0, nhi_cap: 999999999, non_nhi_serious_rate: 1.0, non_nhi_serious_cap: 999999999, non_nhi_general_rate: 1.0, non_nhi_general_cap: 999999999 },
@@ -823,8 +899,62 @@
         select.options[4].text = label_regional;
     }
 
+    function updateDisabledFields() {
+        const gen = document.getElementById('generation-select').value;
+        
+        // Define fields to disable based on generation
+        const fields = {
+            "inpatient-non-nhi-serious": false,
+            "inpatient-non-nhi-general": false,
+            "outpatient-prescription": false,
+            "outpatient-managed": false,
+            "outpatient-non-nhi-serious": false,
+            "outpatient-non-nhi-general": false,
+            "rider-cost-physical": false,
+            "rider-cost-injection": false,
+            "rider-cost-mri": false,
+            "rider-exemption": false
+        };
+
+        if (gen === "1세대" || gen.startsWith("2세대")) {
+            fields["inpatient-non-nhi-general"] = true;
+            fields["outpatient-non-nhi-serious"] = true;
+            fields["outpatient-non-nhi-general"] = true;
+            fields["rider-cost-physical"] = true;
+            fields["rider-cost-injection"] = true;
+            fields["rider-cost-mri"] = true;
+            fields["rider-exemption"] = true;
+        } else if (gen.startsWith("3세대")) {
+            fields["inpatient-non-nhi-general"] = true;
+            fields["outpatient-non-nhi-serious"] = true;
+            fields["outpatient-non-nhi-general"] = true;
+            fields["rider-exemption"] = true;
+        } else if (gen.startsWith("4세대")) {
+            fields["inpatient-non-nhi-general"] = true;
+            fields["outpatient-prescription"] = true; // Combined with general outpatient
+            fields["outpatient-non-nhi-general"] = true;
+            fields["rider-exemption"] = true;
+        } else if (gen === "5세대(비급여중증비중증)") {
+            fields["outpatient-prescription"] = true; // Combined with general outpatient
+        }
+
+        // Apply disabled state and show/hide badges
+        for (const [id, isDisable] of Object.entries(fields)) {
+            const inputEl = document.getElementById(id);
+            if (inputEl) {
+                inputEl.disabled = isDisable;
+            }
+            
+            const badgeEl = document.getElementById("na-" + id);
+            if (badgeEl) {
+                badgeEl.style.display = isDisable ? "inline-block" : "none";
+            }
+        }
+    }
+
     // Main Calculator Logic
     function calculateAll() {
+        updateDisabledFields();
         updateInstitutionLabels();
         const gen = document.getElementById('generation-select').value;
         const info = criteria[gen];
@@ -924,13 +1054,10 @@
         const out_p_copay = parseFloat(document.getElementById('outpatient-prescription').value) || 0;
         const institution = document.getElementById('institution-select').value;
         const out_m_copay = parseFloat(document.getElementById('outpatient-managed').value) || 0;
+        const out_non_nhi_s = parseFloat(document.getElementById('outpatient-non-nhi-serious').value) || 0;
+        const out_non_nhi_g = parseFloat(document.getElementById('outpatient-non-nhi-general').value) || 0;
 
         // Institution rules for copay rates and flat deductions
-        // 1세대: 구분없음 5,000원 공제 (외래+처방 통합)
-        // 2세대: 의원 1만 / 병원 1.5만 / 종합병원이상 2만, 처방조제비 8천원
-        // 3세대: 의원 1만 / 병원 1.5만 / 종합병원이상 2만, 처방조제비 8천원
-        // 4세대: 의원/병원 1만 / 종합병원이상 2만 (외래+처방 통합)
-        // 5세대: 의원/병원 1만 / 종합병원이상 2만 (외래+처방 통합)
         const institutionRules = {
             "의원": { copay_rate: 0.3, flat_2_3: 10000, flat_4: 10000, flat_5: 10000 },
             "병원": { copay_rate: 0.4, flat_2_3: 15000, flat_4: 10000, flat_5: 10000 },
@@ -965,33 +1092,59 @@
 
         let pay_out_g = 0;
         let pay_out_p = 0;
+        let pay_out_non_nhi_s = 0;
+        let pay_out_non_nhi_g = 0;
 
         if (gen === "1세대") {
-            // 1세대: 외래 + 처방 통합해서 5,000원 공제 (1회당 한도 30만원 적용)
-            let total_copay_sum = out_g_copay + out_p_copay;
+            // 1세대: 외래 + 처방 + 비급여외래 통합해서 5,000원 공제 (1회당 한도 30만원 적용)
+            let total_copay_sum = out_g_copay + out_p_copay + out_non_nhi_s + out_non_nhi_g;
             pay_out_g = Math.min(Math.max(0, total_copay_sum - 5000), 300000);
-            pay_out_p = 0; // Displayed as combined
+            pay_out_p = 0;
+            pay_out_non_nhi_s = 0;
+            pay_out_non_nhi_g = 0;
         } else if (gen.startsWith("4세대") || gen === "5세대(비급여중증비중증)") {
-            // 4, 5세대: 외래 + 처방 합산 적용 (1회당 한도 20만원 적용)
+            // 4, 5세대: 급여 외래 + 처방 합산 적용 (1회당 한도 20만원 적용)
             let total_out = total_out_g + total_out_p;
             let total_copay_sum = out_g_copay + out_p_copay;
             let total_public_sum = out_g_public + out_p_public;
 
-            let deduct_g = calcOutpatientDeduct(info, total_out, total_copay_sum, total_public_sum, flat_deduct);
-            
+            let deduct_g = 0;
             if (gen === "5세대(비급여중증비중증)") {
-                pay_out_g = Math.min(Math.max(0, total_out - deduct_g - total_public_sum * 0.2), 200000);
-            } else {
+                // 5세대 급여: MAX(합산본인부담금 * 20%, (외래본인부담금 * 외래건보비율 + 처방본인부담금 * 30%), 기본공제액)
+                let val1 = total_copay_sum * 0.2;
+                let val2 = out_g_copay * out_g_copay_rate + out_p_copay * 0.3;
+                let val3 = flat_deduct;
+                deduct_g = Math.max(val1, val2, val3);
                 pay_out_g = Math.min(Math.max(0, total_copay_sum - deduct_g), 200000);
+
+                // 5세대 비급여(중증): MAX(30%, 3만원)
+                let deduct_s = Math.max(30000, out_non_nhi_s * 0.3);
+                pay_out_non_nhi_s = Math.min(Math.max(0, out_non_nhi_s - deduct_s), 200000);
+
+                // 5세대 비급여(비중증): MAX(50%, 5만원)
+                let deduct_gen = Math.max(50000, out_non_nhi_g * 0.5);
+                pay_out_non_nhi_g = Math.min(Math.max(0, out_non_nhi_g - deduct_gen), 200000);
+            } else {
+                deduct_g = calcOutpatientDeduct(info, total_out, total_copay_sum, total_public_sum, flat_deduct);
+                pay_out_g = Math.min(Math.max(0, total_copay_sum - deduct_g), 200000);
+
+                // 4세대 비급여외래: MAX(30%, 3만원) (중증/비중증 구분없이 합산 적용)
+                let total_non_nhi_out = out_non_nhi_s + out_non_nhi_g;
+                let deduct_non_nhi = Math.max(30000, total_non_nhi_out * 0.3);
+                pay_out_non_nhi_s = Math.min(Math.max(0, total_non_nhi_out - deduct_non_nhi), 200000);
+                pay_out_non_nhi_g = 0;
             }
             pay_out_p = 0; // Combined
         } else {
-            // 2세대 & 3세대: 외래 (한도 25만원) 및 처방 (한도 5만원) 분리 공제 적용
-            let deduct_g = calcOutpatientDeduct(info, total_out_g, out_g_copay, out_g_public, flat_deduct);
-            pay_out_g = Math.min(Math.max(0, out_g_copay - deduct_g), 250000);
+            // 2세대 & 3세대: 외래 (급여+비급여외래 합산, 한도 25만원) 및 처방 (한도 5만원) 분리 공제 적용
+            let total_out_g_copay = out_g_copay + out_non_nhi_s + out_non_nhi_g;
+            let deduct_g = calcOutpatientDeduct(info, total_out_g + out_non_nhi_s + out_non_nhi_g, total_out_g_copay, out_g_public, flat_deduct);
+            pay_out_g = Math.min(Math.max(0, total_out_g_copay - deduct_g), 250000);
 
             let deduct_p = calcOutpatientDeduct(info, total_out_p, out_p_copay, out_p_public, 8000);
             pay_out_p = Math.min(Math.max(0, out_p_copay - deduct_p), 50000);
+            pay_out_non_nhi_s = 0;
+            pay_out_non_nhi_g = 0;
         }
 
         // Outpatient Managed (Manual Therapy)
@@ -1043,10 +1196,6 @@
         let total_rider_input = rider_physical + rider_injection + rider_mri;
         let self_rider = total_rider_input - pay_rider;
 
-        // Total Payout & Copay
-        let total_payout = pay_in_nhi + pay_in_non_nhi_s + pay_in_non_nhi_g + pay_out_g + pay_out_p + pay_out_m + pay_rider;
-        let total_copay = (in_nhi + in_non_nhi_s + in_non_nhi_g + out_g_copay + out_p_copay + out_m_copay + total_rider_input) - total_payout;
-
         // Update UI
         document.getElementById('res-inpatient-nhi').innerText = formatWon(pay_in_nhi);
         document.getElementById('res-inpatient-non-nhi-serious').innerText = formatWon(pay_in_non_nhi_s);
@@ -1054,9 +1203,73 @@
         document.getElementById('res-outpatient-general').innerText = (gen === "1세대" || gen.startsWith("4세대") || gen === "5세대(비급여중증비중증)") ? formatWon(pay_out_g) + " (합산)" : formatWon(pay_out_g);
         document.getElementById('res-outpatient-prescription').innerText = (gen === "1세대" || gen.startsWith("4세대") || gen === "5세대(비급여중증비중증)") ? "외래 합산 적용" : formatWon(pay_out_p);
         document.getElementById('res-outpatient-managed').innerText = formatWon(pay_out_m);
+        document.getElementById('res-outpatient-non-nhi-serious').innerText = (gen.startsWith("4세대") || gen === "5세대(비급여중증비중증)") ? formatWon(pay_out_non_nhi_s) : "일반 외래 합산";
+        document.getElementById('res-outpatient-non-nhi-general').innerText = (gen === "5세대(비급여중증비중증)") ? formatWon(pay_out_non_nhi_g) : "일반 외래 합산";
         document.getElementById('res-rider').innerText = formatWon(pay_rider);
-        document.getElementById('res-total-copay').innerText = formatWon(total_copay);
+        
+        // Total patient cost includes outpatient non-NHI
+        let total_patient_cost = in_nhi + in_non_nhi_s + in_non_nhi_g + out_g_copay + out_p_copay + out_m_copay + out_non_nhi_s + out_non_nhi_g + total_rider_input;
+        let total_payout = pay_in_nhi + pay_in_non_nhi_s + pay_in_non_nhi_g + pay_out_g + pay_out_p + pay_out_m + pay_out_non_nhi_s + pay_out_non_nhi_g + pay_rider;
+        let total_copay = total_patient_cost - total_payout;
+
+        document.getElementById('res-total-patient-cost').innerText = formatWon(total_patient_cost);
         document.getElementById('res-total-payout').innerText = formatWon(total_payout);
+        document.getElementById('res-total-copay').innerText = formatWon(total_copay);
+
+        // Update Inpatient & Managed Formula Labels
+        let f_nhi = "";
+        let f_non_serious = "";
+        let f_non_general = "";
+        let f_managed = "";
+        
+        if (gen === "1세대") {
+            f_nhi = "(100% 보장 | 선택한도 3천/5천/1억 적용)";
+            f_non_serious = "(100% 보장 | 선택한도 3천/5천/1억 적용)";
+            f_non_general = "(100% 보장 | 선택한도 3천/5천/1억 적용)";
+            f_managed = "(1세대: 외래+처방에 합산하여 5,000원 공제)";
+        } else if (gen.startsWith("2세대")) {
+            const isStd = gen.includes("표준화");
+            f_nhi = isStd ? "(90% 보장 / 10% 공제 | 연 5,000만원 한도)" : "(선택형II: 90% 보장 / 표준형: 80% 보장)";
+            f_non_serious = isStd ? "(90% 보장 / 10% 공제 | 연 5,000만원 한도)" : "(선택형II/표준형: 80% 보장 / 20% 공제)";
+            f_non_general = isStd ? "(90% 보장 / 10% 공제 | 연 5,000만원 한도)" : "(선택형II/표준형: 80% 보장 / 20% 공제)";
+            f_managed = "(2세대: 일반 외래공제 차감 적용 / 처방조제비 분리)";
+        } else if (gen.startsWith("3세대")) {
+            f_nhi = "(급여 90% 보장 / 10% 공제 | 연 5,000만원 한도)";
+            f_non_serious = "(비급여 80% 보장 / 20% 공제 | 연 5,000만원 한도)";
+            f_non_general = "(비급여 80% 보장 / 20% 공제 | 연 5,000만원 한도)";
+            f_managed = "(3세대: 일반 외래공제 차감 적용 / 처방조제비 분리)";
+        } else if (gen.startsWith("4세대")) {
+            f_nhi = "(급여 80% 보장 / 20% 공제 | 연 5,000만원 한도)";
+            f_non_serious = "(비급여 70% 보장 / 30% 공제 | 연 5,000만원 한도)";
+            f_non_general = "(비급여 70% 보장 / 30% 공제 | 연 5,000만원 한도)";
+            f_managed = "(4세대: 3대 비급여 특약으로 이관, MAX(3만, 30%) 공제)";
+        } else if (gen === "5세대(비급여중증비중증)") {
+            f_nhi = "(급여 80% 보장 / 20% 공제 | 연 5,000만원 한도)";
+            f_non_serious = "(비급여중증 70% 보장 / 30% 공제 | 연 5,000만원 한도)";
+            f_non_general = "(비급여비중증 50% 보장 / 50% 공제 | 1회 300만 / 연 1,000만 한도)";
+            f_managed = "(5세대: 건보 본인부담금의 5% 지급 | 공단부담비율 연동)";
+        }
+        
+        document.getElementById('formula-inpatient-nhi').innerText = f_nhi;
+        document.getElementById('formula-inpatient-non-nhi-serious').innerText = f_non_serious;
+        document.getElementById('formula-inpatient-non-nhi-general').innerText = f_non_general;
+        document.getElementById('formula-outpatient-managed').innerText = f_managed;
+
+        // Update Outpatient Non-NHI Formula Labels
+        let f_out_non_s = "";
+        let f_out_non_g = "";
+        if (gen === "1세대" || gen.startsWith("2세대") || gen.startsWith("3세대")) {
+            f_out_non_s = "(일반 외래통원 보장과 합산 처리)";
+            f_out_non_g = "(일반 외래통원 보장과 합산 처리)";
+        } else if (gen.startsWith("4세대")) {
+            f_out_non_s = "(4세대 비급여통원 합산: MAX(3만, 30%) 공제)";
+            f_out_non_g = "(4세대 비급여통원 합산: MAX(3만, 30%) 공제)";
+        } else if (gen === "5세대(비급여중증비중증)") {
+            f_out_non_s = "(5세대 비급여중증: MAX(3만, 30%) 공제)";
+            f_out_non_g = "(5세대 비급여비중증: MAX(5만, 50%) 공제)";
+        }
+        document.getElementById('formula-outpatient-non-nhi-serious').innerText = f_out_non_s;
+        document.getElementById('formula-outpatient-non-nhi-general').innerText = f_out_non_g;
 
         // Update Rider Detail Label in UI
         let detailStr = "";
@@ -1252,6 +1465,221 @@
             `;
             case2Body.appendChild(tr);
         });
+    }
+
+    function runSelfTests() {
+        const tbody = document.getElementById('test-tbody');
+        tbody.innerHTML = "";
+
+        const resetInputs = () => {
+            document.getElementById('inpatient-nhi').value = "0";
+            document.getElementById('inpatient-non-nhi-serious').value = "0";
+            document.getElementById('inpatient-non-nhi-general').value = "0";
+            document.getElementById('outpatient-general').value = "0";
+            document.getElementById('outpatient-prescription').value = "0";
+            document.getElementById('outpatient-managed').value = "0";
+            document.getElementById('outpatient-non-nhi-serious').value = "0";
+            document.getElementById('outpatient-non-nhi-general').value = "0";
+            document.getElementById('rider-cost-physical').value = "0";
+            document.getElementById('rider-cost-injection').value = "0";
+            document.getElementById('rider-cost-mri').value = "0";
+            document.getElementById('rider-exemption').checked = false;
+        };
+
+        const scenarios = [
+            {
+                no: 1,
+                desc: "1세대 입원 1억원 한도 작동 테스트 (청구 1.2억, 1억한도선택)",
+                gen: "1세대",
+                setup: () => {
+                    resetInputs();
+                    document.getElementById('generation-select').value = "1세대";
+                    document.getElementById('inpatient-nhi').value = "120000000";
+                    setTimeout(() => {
+                        const selectEl = document.getElementById('limit-1g-select');
+                        if (selectEl) {
+                            selectEl.value = "100000000";
+                        }
+                    }, 0);
+                },
+                expected: 100000000
+            },
+            {
+                no: 2,
+                desc: "2세대 입원 5천만원 합산 한도 작동 테스트 (청구 6천만)",
+                gen: "2세대-표준화",
+                setup: () => {
+                    resetInputs();
+                    document.getElementById('generation-select').value = "2세대-표준화";
+                    document.getElementById('inpatient-nhi').value = "60000000";
+                },
+                expected: 50000000
+            },
+            {
+                no: 3,
+                desc: "4세대 급여/비급여 입원 5천만원 각각 독립한도 테스트 (각각 8천만 청구)",
+                gen: "4세대(비급여할증제)",
+                setup: () => {
+                    resetInputs();
+                    document.getElementById('generation-select').value = "4세대(비급여할증제)";
+                    document.getElementById('inpatient-nhi').value = "80000000";
+                    document.getElementById('inpatient-non-nhi-serious').value = "80000000";
+                },
+                expected: 100000000
+            },
+            {
+                no: 4,
+                desc: "5세대 비급여(비중증) 입원 1회 300만원 한도 작동 테스트 (청구 800만)",
+                gen: "5세대(비급여중증비중증)",
+                setup: () => {
+                    resetInputs();
+                    document.getElementById('generation-select').value = "5세대(비급여중증비중증)";
+                    document.getElementById('inpatient-non-nhi-general').value = "8000000";
+                },
+                expected: 3000000
+            },
+            {
+                no: 5,
+                desc: "5세대 비급여(비중증) 입원 1회 300만원 한도 작동 테스트 (청구 3천만)",
+                gen: "5세대(비급여중증비중증)",
+                setup: () => {
+                    resetInputs();
+                    document.getElementById('generation-select').value = "5세대(비급여중증비중증)";
+                    document.getElementById('inpatient-non-nhi-general').value = "30000000";
+                },
+                expected: 3000000
+            },
+            {
+                no: 6,
+                desc: "1세대 통원 30만원 한도 작동 테스트 (본인부담금 50만 청구)",
+                gen: "1세대",
+                setup: () => {
+                    resetInputs();
+                    document.getElementById('generation-select').value = "1세대";
+                    document.getElementById('outpatient-general').value = "500000";
+                },
+                expected: 300000
+            },
+            {
+                no: 7,
+                desc: "2세대 외래 25만원 / 처방 5만원 분리 한도 테스트 (외래 40만 / 처방 8만 청구)",
+                gen: "2세대-표준화",
+                setup: () => {
+                    resetInputs();
+                    document.getElementById('generation-select').value = "2세대-표준화";
+                    document.getElementById('outpatient-general').value = "400000";
+                    document.getElementById('outpatient-prescription').value = "80000";
+                    document.getElementById('institution-select').value = "의원";
+                },
+                expected: 300000
+            },
+            {
+                no: 8,
+                desc: "5세대 통원 합산 한도 테스트 (외래 30만 / 처방 10만 청구)",
+                gen: "5세대(비급여중증비중증)",
+                setup: () => {
+                    resetInputs();
+                    document.getElementById('generation-select').value = "5세대(비급여중증비중증)";
+                    document.getElementById('outpatient-general').value = "300000";
+                    document.getElementById('outpatient-prescription').value = "100000";
+                    document.getElementById('institution-select').value = "의원";
+                },
+                expected: 200000
+            },
+            {
+                no: 9,
+                desc: "5세대 비중증 3대비급여 도수/주사 면책 및 MRI 정상 지급 테스트",
+                gen: "5세대(비급여중증비중증)",
+                setup: () => {
+                    resetInputs();
+                    document.getElementById('generation-select').value = "5세대(비급여중증비중증)";
+                    document.getElementById('rider-cost-physical').value = "350000";
+                    document.getElementById('rider-cost-injection').value = "150000";
+                    document.getElementById('rider-cost-mri').value = "1000000";
+                    document.getElementById('rider-exemption').checked = true;
+                },
+                expected: 700000
+            },
+            {
+                no: 10,
+                desc: "5세대 중증 3대비급여 도수/주사/MRI 정상 지급 테스트 (비중증 스위치 OFF)",
+                gen: "5세대(비급여중증비중증)",
+                setup: () => {
+                    resetInputs();
+                    document.getElementById('generation-select').value = "5세대(비급여중증비중증)";
+                    document.getElementById('rider-cost-physical').value = "350000";
+                    document.getElementById('rider-cost-injection').value = "150000";
+                    document.getElementById('rider-cost-mri').value = "1000000";
+                    document.getElementById('rider-exemption').checked = false;
+                },
+                expected: 1050000
+            }
+        ];
+
+        // Backup current inputs
+        const backup = {
+            gen: document.getElementById('generation-select').value,
+            in_nhi: document.getElementById('inpatient-nhi').value,
+            in_non_nhi_s: document.getElementById('inpatient-non-nhi-serious').value,
+            in_non_nhi_g: document.getElementById('inpatient-non-nhi-general').value,
+            out_g: document.getElementById('outpatient-general').value,
+            out_p: document.getElementById('outpatient-prescription').value,
+            inst: document.getElementById('institution-select').value,
+            out_m: document.getElementById('outpatient-managed').value,
+            out_non_s: document.getElementById('outpatient-non-nhi-serious').value,
+            out_non_g: document.getElementById('outpatient-non-nhi-general').value,
+            rider_p: document.getElementById('rider-cost-physical').value,
+            rider_i: document.getElementById('rider-cost-injection').value,
+            rider_m: document.getElementById('rider-cost-mri').value,
+            exempt: document.getElementById('rider-exemption').checked
+        };
+
+        scenarios.forEach(sc => {
+            sc.setup();
+            
+            // For 1세대 limit select delay
+            if (sc.no === 1) {
+                const selectEl = document.getElementById('limit-1g-select');
+                if (selectEl) selectEl.value = "100000000";
+            }
+
+            calculateAll();
+
+            // Read the actual total payout from UI
+            const actualText = document.getElementById('res-total-payout').innerText;
+            const actual = parseInt(actualText.replace(/[^0-9]/g, '')) || 0;
+
+            const isMatch = Math.abs(actual - sc.expected) < 10;
+            const resultBadge = isMatch ? '<span class="badge badge-success">통과</span>' : '<span class="badge badge-warning">실패</span>';
+
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td>${sc.no}</td>
+                <td style="text-align:left; font-size:0.85rem;">${sc.desc}</td>
+                <td>${sc.gen}</td>
+                <td style="font-weight:600;">${sc.expected.toLocaleString()}원</td>
+                <td style="font-weight:700; color:var(--primary);">${actual.toLocaleString()}원</td>
+                <td>${resultBadge}</td>
+            `;
+            tbody.appendChild(tr);
+        });
+
+        // Restore backup
+        document.getElementById('generation-select').value = backup.gen;
+        document.getElementById('inpatient-nhi').value = backup.in_nhi;
+        document.getElementById('inpatient-non-nhi-serious').value = backup.in_non_nhi_s;
+        document.getElementById('inpatient-non-nhi-general').value = backup.in_non_nhi_g;
+        document.getElementById('outpatient-general').value = backup.out_g;
+        document.getElementById('outpatient-prescription').value = backup.out_p;
+        document.getElementById('institution-select').value = backup.inst;
+        document.getElementById('outpatient-managed').value = backup.out_m;
+        document.getElementById('outpatient-non-nhi-serious').value = backup.out_non_s;
+        document.getElementById('outpatient-non-nhi-general').value = backup.out_non_g;
+        document.getElementById('rider-cost-physical').value = backup.rider_p;
+        document.getElementById('rider-cost-injection').value = backup.rider_i;
+        document.getElementById('rider-cost-mri').value = backup.rider_m;
+        document.getElementById('rider-exemption').checked = backup.exempt;
+        calculateAll();
     }
 </script>
 
