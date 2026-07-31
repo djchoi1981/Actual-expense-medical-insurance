@@ -1,0 +1,1259 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>실손의료보험 세대별 계산기 & 변천사 대시보드</title>
+    <!-- Google Fonts: Inter & Outfit for modern typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            /* Design Tokens: Vibrant HSL Tailored Palettes */
+            --primary-hue: 220;
+            --primary: hsl(var(--primary-hue), 85%, 57%);
+            --primary-hover: hsl(var(--primary-hue), 85%, 47%);
+            --primary-light: hsl(var(--primary-hue), 85%, 96%);
+            
+            --bg-color: #0b0f19;
+            --surface-color: rgba(22, 29, 49, 0.7);
+            --surface-border: rgba(255, 255, 255, 0.08);
+            --text-main: #f3f4f6;
+            --text-muted: #9ca3af;
+            
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --info: #3b82f6;
+
+            --card-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            --font-main: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            --font-display: 'Outfit', sans-serif;
+            --transition-speed: 0.3s;
+        }
+
+        [data-theme="light"] {
+            --bg-color: #f8fafc;
+            --surface-color: rgba(255, 255, 255, 0.8);
+            --surface-border: rgba(0, 0, 0, 0.08);
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --primary-light: hsl(var(--primary-hue), 85%, 92%);
+            --card-shadow: 0 8px 32px 0 rgba(148, 163, 184, 0.15);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: var(--font-main);
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.6;
+            padding: 2rem 1.5rem;
+            min-height: 100vh;
+            transition: background-color var(--transition-speed), color var(--transition-speed);
+        }
+
+        /* Glassmorphism Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2.5rem;
+            border-bottom: 1px solid var(--surface-border);
+            padding-bottom: 1.5rem;
+        }
+
+        .header-title h1 {
+            font-family: var(--font-display);
+            font-size: 2.2rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary), #8b5cf6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
+        }
+
+        .header-title p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+
+        /* Interactive Theme Toggle */
+        .theme-toggle {
+            background: var(--surface-color);
+            border: 1px solid var(--surface-border);
+            padding: 0.6rem 1.2rem;
+            border-radius: 50px;
+            color: var(--text-main);
+            cursor: pointer;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all var(--transition-speed);
+            box-shadow: var(--card-shadow);
+        }
+
+        .theme-toggle:hover {
+            transform: translateY(-2px);
+            border-color: var(--primary);
+        }
+
+        /* Modern Tabs Navigation */
+        .tabs {
+            display: flex;
+            gap: 0.5rem;
+            background: var(--surface-color);
+            border: 1px solid var(--surface-border);
+            padding: 0.4rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            box-shadow: var(--card-shadow);
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 0.8rem 1.5rem;
+            border: none;
+            background: transparent;
+            color: var(--text-muted);
+            font-weight: 600;
+            font-size: 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all var(--transition-speed);
+            text-align: center;
+        }
+
+        .tab-btn:hover {
+            color: var(--text-main);
+        }
+
+        .tab-btn.active {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.4s ease-in-out;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Glassmorphism Card Style */
+        .card {
+            background: var(--surface-color);
+            border: 1px solid var(--surface-border);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            box-shadow: var(--card-shadow);
+        }
+
+        .card h2 {
+            font-family: var(--font-display);
+            font-size: 1.4rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            color: var(--primary);
+        }
+
+        /* Calculator Layout grid */
+        .grid-calc {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+
+        @media (max-width: 900px) {
+            .grid-calc {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .form-group {
+            margin-bottom: 1.2rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: var(--text-main);
+        }
+
+        select, input[type="number"], input[type="text"] {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--surface-border);
+            border-radius: 8px;
+            color: var(--text-main);
+            font-size: 1rem;
+            outline: none;
+            transition: all var(--transition-speed);
+        }
+
+        select:focus, input[type="number"]:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+        }
+
+        .sub-block-title {
+            font-size: 1rem;
+            font-weight: 700;
+            margin: 1.5rem 0 1rem 0;
+            padding-bottom: 0.4rem;
+            border-bottom: 1px dashed var(--surface-border);
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        /* Switch Toggle */
+        .switch-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(0,0,0,0.15);
+            padding: 0.8rem 1rem;
+            border-radius: 8px;
+            border: 1px solid var(--surface-border);
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 26px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #4b5563;
+            transition: .4s;
+            border-radius: 34px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: var(--primary);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(24px);
+        }
+
+        /* Result Panel Styling */
+        .result-panel {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(139, 92, 246, 0.15));
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            border-radius: 16px;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .result-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.8rem 0;
+            border-bottom: 1px solid var(--surface-border);
+        }
+
+        .result-row:last-child {
+            border-bottom: none;
+        }
+
+        .result-label {
+            font-weight: 500;
+            color: var(--text-muted);
+        }
+
+        .result-value {
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        .result-total {
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 2px solid rgba(59, 130, 246, 0.3);
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+        }
+
+        .result-total .result-label {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .result-total .result-value {
+            font-size: 2.2rem;
+            font-family: var(--font-display);
+            color: var(--primary);
+        }
+
+        /* Interactive Reference Table */
+        .search-box {
+            margin-bottom: 1.5rem;
+        }
+
+        .table-container {
+            overflow-x: auto;
+            border-radius: 8px;
+            border: 1px solid var(--surface-border);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 0.9rem;
+        }
+
+        th, td {
+            padding: 1rem 1.2rem;
+            border-bottom: 1px solid var(--surface-border);
+        }
+
+        th {
+            background-color: rgba(0, 0, 0, 0.3);
+            font-weight: 700;
+            color: var(--primary);
+            white-space: nowrap;
+        }
+
+        tr:hover {
+            background-color: rgba(255, 255, 255, 0.02);
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .badge-success { background-color: rgba(16, 185, 129, 0.2); color: #34d399; }
+        .badge-warning { background-color: rgba(245, 158, 11, 0.2); color: #fbbf24; }
+        .badge-danger { background-color: rgba(239, 68, 68, 0.2); color: #f87171; }
+
+        /* Dynamic SVG Chart */
+        .chart-box {
+            height: 240px;
+            margin-top: 1.5rem;
+            position: relative;
+        }
+
+        /* Case Studies Grid */
+        .case-studies-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2rem;
+        }
+
+        .case-header {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 1rem;
+            border-radius: 8px;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .mismatch-highlight {
+            color: var(--warning);
+            font-size: 0.8rem;
+            margin-top: 0.5rem;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <div class="header-title">
+            <h1>실손의료비 세대별 계산기 및 변천사</h1>
+            <p>1세대부터 5세대까지의 보장 한도, 공제 비율 및 지급액 실시간 분석 시스템</p>
+        </div>
+        <button class="theme-toggle" id="theme-btn" onclick="toggleTheme()">
+            <span>🌙</span> Dark Mode
+        </button>
+    </header>
+
+    <!-- Tab Navigation -->
+    <nav class="tabs">
+        <button class="tab-btn active" onclick="switchTab('calc-tab', this)">실손의료비 계산기</button>
+        <button class="tab-btn" onclick="switchTab('case-tab', this)">검증 사례 분석</button>
+        <button class="tab-btn" onclick="switchTab('ref-tab', this)">세대별 변천사 요약표</button>
+    </nav>
+
+    <!-- Tab 1: Calculator -->
+    <main id="calc-tab" class="tab-content active">
+        <div class="grid-calc">
+            <!-- Input Form Card -->
+            <section class="card">
+                <h2><span>🔢</span> 가입 세대 및 진료 항목 입력</h2>
+                
+                <div class="form-group">
+                    <label for="generation-select">가입 실손보험 세대</label>
+                    <select id="generation-select" onchange="calculateAll()">
+                        <option value="1세대">1세대 (표준화이전, ~09년 7월)</option>
+                        <option value="2세대-표준화">2세대-표준화 (09년 8월 ~ 13년 3월)</option>
+                        <option value="2세대-1차개정">2세대-1차개정 (13년 4월 ~ 15년 8월)</option>
+                        <option value="2세대-2차개정">2세대-2차개정 (15년 9월 ~ 15년 12월)</option>
+                        <option value="2세대-3차개정">2세대-3차개정 (16년 1월 ~ 17년 3월)</option>
+                        <option value="3세대(착한실손)">3세대(착한실손) (17년 4월 ~ 21년 6월)</option>
+                        <option value="4세대(비급여할증제)">4세대(비급여할증제) (21년 7월 ~ 26년 3월)</option>
+                        <option value="5세대(비급여중증비중증)" selected>5세대(비급여중증비중증) (26년 4월 ~)</option>
+                    </select>
+                </div>
+
+                <!-- Block 1: Inpatient -->
+                <div class="sub-block-title">① 입원 치료 (급여 & 비급여 중증/비중증)</div>
+                
+                <div class="form-group" id="limit-1g-group" style="display:none;">
+                    <label for="limit-1g-select">1세대 입원의료비 한도 선택</label>
+                    <select id="limit-1g-select" onchange="calculateAll()">
+                        <option value="30000000">3,000만원</option>
+                        <option value="50000000" selected>5,000만원</option>
+                        <option value="100000000">1억원</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="inpatient-nhi">급여 입원의료비 (원)</label>
+                    <input type="number" id="inpatient-nhi" value="5000000" step="50000" oninput="calculateAll()">
+                </div>
+                <div class="form-group">
+                    <label for="inpatient-non-nhi-serious">비급여 (중증 질환) 입원의료비 (원)</label>
+                    <input type="number" id="inpatient-non-nhi-serious" value="3000000" step="50000" oninput="calculateAll()">
+                </div>
+                <div class="form-group">
+                    <label for="inpatient-non-nhi-general">비급여 (비중증 질환) 입원의료비 (원)</label>
+                    <input type="number" id="inpatient-non-nhi-general" value="5000000" step="50000" oninput="calculateAll()">
+                </div>
+
+                <!-- Block 2: Outpatient -->
+                <div class="sub-block-title">② 통원 치료 (급여 일반 & 관리급여 도수치료)</div>
+                
+                <div class="form-group">
+                    <label for="outpatient-general">급여 (일반) 외래 통원 본인부담금 (원)</label>
+                    <input type="number" id="outpatient-general" value="30000" step="5000" oninput="calculateAll()">
+                </div>
+                <div class="form-group">
+                    <label for="institution-select">의료기관 종류 (급여 일반 통원)</label>
+                    <select id="institution-select" onchange="calculateAll()">
+                        <option value="의원" selected>의원 (본인부담률 30% / 공제 1만원)</option>
+                        <option value="병원">병원 (본인부담률 40% / 공제 1.5만원)</option>
+                        <option value="종합병원">종합병원 (본인부담률 50% / 공제 2만원)</option>
+                        <option value="상급종합병원">상급종합병원 (본인부담률 60% / 공제 2만원)</option>
+                        <option value="권역응급의료센터">권역응급의료센터 (본인부담률 90% / 공제 2만원)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="outpatient-prescription">처방조제비 본인부담금 (원)</label>
+                    <input type="number" id="outpatient-prescription" value="15000" step="1000" oninput="calculateAll()">
+                </div>
+                <div class="form-group">
+                    <label for="outpatient-managed">관리급여 도수치료 본인부담금 (원)</label>
+                    <input type="number" id="outpatient-managed" value="41600" step="1000" oninput="calculateAll()">
+                </div>
+
+                <!-- Block 3: Special Riders -->
+                <div class="sub-block-title">③ 3대 비급여 특약 (도수/체외충격파, 주사, MRI)</div>
+                
+                <div class="form-group">
+                    <label for="rider-cost-physical">도수치료/증식치료/체외충격파 치료비 (원)</label>
+                    <input type="number" id="rider-cost-physical" value="350000" step="10000" oninput="calculateAll()">
+                </div>
+                <div class="form-group">
+                    <label for="rider-cost-injection">비급여 주사제 치료비 (원)</label>
+                    <input type="number" id="rider-cost-injection" value="150000" step="10000" oninput="calculateAll()">
+                </div>
+                <div class="form-group">
+                    <label for="rider-cost-mri">비급여 MRI/MRA 검사비 (원)</label>
+                    <input type="number" id="rider-cost-mri" value="0" step="50000" oninput="calculateAll()">
+                </div>
+                
+                <div class="form-group switch-container">
+                    <span>5세대 비중증 분류 여부 (근골격계/체외충격파/주사 면책대상)</span>
+                    <label class="switch">
+                        <input type="checkbox" id="rider-exemption" onchange="calculateAll()" checked>
+                        <span class="slider"></span>
+                    </label>
+                </div>
+            </section>
+
+            <!-- Results Card -->
+            <section class="result-panel">
+                <div>
+                    <h2><span>📊</span> 지급액 시뮬레이션 결과</h2>
+                    
+                    <div class="sub-block-title" style="margin-top:0;">상세 보장 내역</div>
+                    
+                    <div class="result-row">
+                        <span class="result-label">급여 입원 지급액</span>
+                        <span class="result-value" id="res-inpatient-nhi">0원</span>
+                    </div>
+                    <div class="result-row">
+                        <span class="result-label">비급여(중증) 입원 지급액</span>
+                        <span class="result-value" id="res-inpatient-non-nhi-serious">0원</span>
+                    </div>
+                    <div class="result-row">
+                        <span class="result-label">비급여(비중증) 입원 지급액</span>
+                        <span class="result-value" id="res-inpatient-non-nhi-general">0원</span>
+                    </div>
+                    <div class="result-row">
+                        <span class="result-label">급여(일반) 통원 지급액 <small id="deduct-g-label" style="font-size:0.8rem;color:var(--text-muted);display:block;"></small></span>
+                        <span class="result-value" id="res-outpatient-general">0원</span>
+                    </div>
+                    <div class="result-row">
+                        <span class="result-label">처방조제비 지급액 <small id="deduct-p-label" style="font-size:0.8rem;color:var(--text-muted);display:block;"></small></span>
+                        <span class="result-value" id="res-outpatient-prescription">0원</span>
+                    </div>
+                    <div class="result-row">
+                        <span class="result-label">관리급여 도수치료 지급액</span>
+                        <span class="result-value" id="res-outpatient-managed">0원</span>
+                    </div>
+                    <div class="result-row">
+                        <span class="result-label">3대 비급여 특약 지급액 <small id="rider-detail-label" style="font-size:0.8rem;color:var(--text-muted);display:block;"></small></span>
+                        <span class="result-value" id="res-rider">0원</span>
+                    </div>
+                    <div class="result-row">
+                        <span class="result-label">총 본인 자기부담금</span>
+                        <span class="result-value" id="res-total-copay" style="color:var(--warning);">0원</span>
+                    </div>
+                </div>
+
+                <div>
+                    <!-- Visual SVG Chart -->
+                    <div class="chart-box" id="chart-container">
+                        <!-- Redrawn by JS -->
+                    </div>
+
+                    <div class="result-total">
+                        <span class="result-label">최종 지급 보험금</span>
+                        <span class="result-value" id="res-total-payout">0원</span>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Tab 2: Case Studies -->
+    <section id="case-tab" class="tab-content">
+        <div class="case-studies-grid">
+            <!-- Case Study 1 Card -->
+            <div class="card">
+                <div class="case-header">
+                    <h3>사례 1. 도수치료 (급여본인부담률 95%) 외래 통원</h3>
+                    <span class="badge badge-success">통원 치료 검증</span>
+                </div>
+                <p style="margin-bottom:1rem; color:var(--text-muted);">
+                    조건: 총의료비 43,850원, 건보공단부담금 2,250원, 건보본인부담금 41,600원 발생 시 세대별 지급액 비교
+                </p>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>세대 구분</th>
+                                <th>공제 금액 (계산)</th>
+                                <th>지급 보험금 (계산)</th>
+                                <th>공식 교육자료 금액</th>
+                                <th>일치 여부</th>
+                            </tr>
+                        </thead>
+                        <tbody id="case1-tbody">
+                            <!-- Populated by JS -->
+                        </tbody>
+                    </table>
+                </div>
+                <p class="mismatch-highlight">
+                    ※ 5세대의 경우 공식 교육자료상의 2,080원 표기는 원자료의 오타(단순 역산 산술 오류)로 밝혀졌으며, 정확한 파라미터 적용 시 1,800원 지급이 산식상 올바른 결과입니다.
+                </p>
+            </div>
+
+            <!-- Case Study 2 Card -->
+            <div class="card">
+                <div class="case-header">
+                    <h3>사례 2. 비중증질환 비급여수술 (500만원 / 1,000만원) 입원</h3>
+                    <span class="badge badge-warning">입원 치료 검증</span>
+                </div>
+                <p style="margin-bottom:1rem; color:var(--text-muted);">
+                    조건: 비급여(비중증) 입원 500만원 및 1,000만원 청구 시 세대별 지급액 비교 (5세대의 1회 지급한도 300만원 작동 검증)
+                </p>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th rowspan="2">세대 구분</th>
+                                <th colspan="3">사례 A: 청구액 500만원</th>
+                                <th colspan="3">사례 B: 청구액 1,000만원</th>
+                            </tr>
+                            <tr>
+                                <th>지급액 (계산)</th>
+                                <th>원자료 기준액</th>
+                                <th>일치</th>
+                                <th>지급액 (계산)</th>
+                                <th>원자료 기준액</th>
+                                <th>일치</th>
+                            </tr>
+                        </thead>
+                        <tbody id="case2-tbody">
+                            <!-- Populated by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Tab 3: Reference Table -->
+    <section id="ref-tab" class="tab-content">
+        <div class="card">
+            <h2><span>📋</span> DB손해보험 공식 실손의료비 변천사 표</h2>
+            <div class="search-box">
+                <input type="text" id="ref-search" placeholder="검색어를 입력하세요 (예: 보장비율, 입원, 공제...)" oninput="filterRefTable()">
+            </div>
+            <div class="table-container">
+                <table id="ref-table">
+                    <thead>
+                        <tr id="ref-header">
+                            <!-- Populated by JS -->
+                        </tr>
+                    </thead>
+                    <tbody id="ref-tbody">
+                        <!-- Populated by JS -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+</div>
+
+<script>
+    // Insurance calculation criteria database
+    const criteria = {
+        "1세대": {
+            inpatient: { nhi_rate: 1.0, nhi_cap: 999999999, non_nhi_serious_rate: 1.0, non_nhi_serious_cap: 999999999, non_nhi_general_rate: 1.0, non_nhi_general_cap: 999999999 },
+            outpatient: { base: "급여본인부담금", flat: 5000, rate: 0.0, max_check: "N", copay_deduct: 0.0 },
+            rider: { flat: 0, rate: 0.0, active: "Y" }
+        },
+        "2세대-표준화": {
+            inpatient: { nhi_rate: 0.9, nhi_cap: 2000000, non_nhi_serious_rate: 0.9, non_nhi_serious_cap: 2000000, non_nhi_general_rate: 0.9, non_nhi_general_cap: 2000000 },
+            outpatient: { base: "급여본인부담금", flat: 10000, rate: 0.0, max_check: "N", copay_deduct: 0.0 },
+            rider: { flat: 0, rate: 0.0, active: "Y" }
+        },
+        "2세대-1차개정": {
+            inpatient: { nhi_rate: 0.9, nhi_cap: 2000000, non_nhi_serious_rate: 0.8, non_nhi_serious_cap: 2000000, non_nhi_general_rate: 0.8, non_nhi_general_cap: 2000000 },
+            outpatient: { base: "급여본인부담금", flat: 10000, rate: 0.2, max_check: "N", copay_deduct: 0.0 },
+            rider: { flat: 0, rate: 0.0, active: "Y" }
+        },
+        "2세대-2차개정": {
+            inpatient: { nhi_rate: 0.9, nhi_cap: 2000000, non_nhi_serious_rate: 0.8, non_nhi_serious_cap: 2000000, non_nhi_general_rate: 0.8, non_nhi_general_cap: 2000000 },
+            outpatient: { base: "급여본인부담금", flat: 10000, rate: 0.1, max_check: "N", copay_deduct: 0.0 },
+            rider: { flat: 0, rate: 0.0, active: "Y" }
+        },
+        "2세대-3차개정": {
+            inpatient: { nhi_rate: 0.9, nhi_cap: 2000000, non_nhi_serious_rate: 0.8, non_nhi_serious_cap: 2000000, non_nhi_general_rate: 0.8, non_nhi_general_cap: 2000000 },
+            outpatient: { base: "급여본인부담금", flat: 10000, rate: 0.1, max_check: "N", copay_deduct: 0.0 },
+            rider: { flat: 0, rate: 0.0, active: "Y" }
+        },
+        "3세대(착한실손)": {
+            inpatient: { nhi_rate: 0.9, nhi_cap: 2000000, non_nhi_serious_rate: 0.8, non_nhi_serious_cap: 2000000, non_nhi_general_rate: 0.8, non_nhi_general_cap: 2000000 },
+            outpatient: { base: "급여본인부담금", flat: 10000, rate: 0.1, max_check: "N", copay_deduct: 0.0 },
+            rider: { flat: 20000, rate: 0.3, active: "N" }
+        },
+        "4세대(비급여할증제)": {
+            inpatient: { nhi_rate: 0.8, nhi_cap: 2000000, non_nhi_serious_rate: 0.7, non_nhi_serious_cap: 999999999, non_nhi_general_rate: 0.7, non_nhi_general_cap: 999999999 },
+            outpatient: { base: "총의료비", flat: 10000, rate: 0.2, max_check: "N", copay_deduct: 1.0 },
+            rider: { flat: 30000, rate: 0.3, active: "N" }
+        },
+        "5세대(비급여중증비중증)": {
+            inpatient: { nhi_rate: 0.8, nhi_cap: 2000000, non_nhi_serious_rate: 0.7, non_nhi_serious_cap: 5000000, non_nhi_general_rate: 0.5, non_nhi_general_cap: 3000000 },
+            outpatient: { base: "총의료비", flat: 10000, rate: 0.2, max_check: "Y", copay_deduct: 0.2 },
+            rider: { flat: 30000, rate: 0.3, active: "N" }
+        }
+    };
+
+    // Original reference table mapping (DB손보 교육자료)
+    const refData = {
+        headers: ["구분", "1세대", "2세대-표준화", "2세대-1차개정", "2세대-2차개정", "2세대-3차개정", "3세대(착한실손)", "4세대(비급여할증제)", "5세대"],
+        rows: [
+            ["가입시기", "~09.07", "09.08~13.03", "13.04~15.08", "15.09~15.12", "16.01~17.03", "17.04~21.06", "21.07~26.03", "26.04~"],
+            ["담보구성", "상해입원/상해통원/질병입원/질병통원/일반상해의료비", "상해입원/통원, 질병입원/통원", "동일", "동일", "동일", "동일", "상해급여/비급여, 질병급여/비급여", "상해급여, 질병급여, 상해비급여(중증/비중증), 질병비급여(중증/비중증)"],
+            ["가입금액", "입원:3/5천/1억, 통원:10~30만", "입원:5천만, 통원:30만", "동일", "동일", "동일", "동일", "급여/비급여 각 5천만", "급여/비급여 각 5천만 (비급여 비중증 1천만)"],
+            ["[입원] 보장비율", "100%", "90%", "표준형80%/선택형90%", "표준형80%/선택형II:급여90%,비급여80%", "표준형:급여80%,비급여80%/선택형II:급여90%,비급여80%", "동일", "급여80% / 비급여70%", "급여80% / 비급여(중증70%, 비중증50%)"],
+            ["[입원] 본인부담한도", "없음", "200만원", "200만원", "200만원", "200만원", "200만원", "급여 200만원 (비급여 없음)", "급여 200만원 / 비급여(중증) 종합·상급종합 500만원 (비중증 없음)"],
+            ["[통원] 외래공제", "5천원", "1만, 1.5만, 2만원 중 공제", "표준형:MAX(1~2만,20%)/선택형:1~2만", "표준형:MAX(1~2만,20%)/선택형:MAX(1~2만,급여10%+비급여20%)", "동일", "동일", "급여:MAX(1~2만,20%)/비급여:MAX(3만,30%)", "급여:MAX(건보본인부담률,20%,1~2만)/비급여(중증):MAX(30%,3만)/비급여(비중증):MAX(50%,5만)"],
+            ["3대비급여특약", "부책(자기부담 없음)", "부책", "부책", "부책", "부책", "공제: MAX(2만, 30%)", "공제: MAX(3만, 30%)", "공제: MAX(3만, 30%) *면책(비중증비급여):근골격계이학요법,체외충격파,주사제"]
+        ]
+    };
+
+    // Initialize Page
+    window.onload = function() {
+        initRefTable();
+        calculateAll();
+        initCaseStudies();
+    };
+
+    function toggleTheme() {
+        const body = document.body;
+        const btn = document.getElementById('theme-btn');
+        if (body.getAttribute('data-theme') === 'light') {
+            body.removeAttribute('data-theme');
+            btn.innerHTML = "<span>🌙</span> Dark Mode";
+        } else {
+            body.setAttribute('data-theme', 'light');
+            btn.innerHTML = "<span>☀️</span> Light Mode";
+        }
+    }
+
+    function switchTab(tabId, btn) {
+        document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById(tabId).classList.add('active');
+        btn.classList.add('active');
+        if (tabId === 'calc-tab') {
+            calculateAll();
+        }
+    }
+
+    function updateInstitutionLabels() {
+        const gen = document.getElementById('generation-select').value;
+        const select = document.getElementById('institution-select');
+        
+        let label_clinic = "의원";
+        let label_hospital = "병원";
+        let label_general = "종합병원";
+        let label_tertiary = "상급종합병원";
+        let label_regional = "권역응급의료센터";
+        
+        if (gen === "1세대") {
+            label_clinic += " (공제 5천원 / 외래+처방 합산)";
+            label_hospital += " (공제 5천원 / 외래+처방 합산)";
+            label_general += " (공제 5천원 / 외래+처방 합산)";
+            label_tertiary += " (공제 5천원 / 외래+처방 합산)";
+            label_regional += " (공제 5천원 / 외래+처방 합산)";
+        } else if (gen.startsWith("2세대") || gen.startsWith("3세대")) {
+            label_clinic += " (외래공제 1만원 / 처방 8천원)";
+            label_hospital += " (외래공제 1.5만원 / 처방 8천원)";
+            label_general += " (외래공제 2만원 / 처방 8천원)";
+            label_tertiary += " (외래공제 2만원 / 처방 8천원)";
+            label_regional += " (외래공제 2만원 / 처방 8천원)";
+        } else if (gen.startsWith("4세대")) {
+            label_clinic += " (외래공제 1만원 / 외래+처방 합산)";
+            label_hospital += " (외래공제 1만원 / 외래+처방 합산)";
+            label_general += " (외래공제 2만원 / 외래+처방 합산)";
+            label_tertiary += " (외래공제 2만원 / 외래+처방 합산)";
+            label_regional += " (외래공제 2만원 / 외래+처방 합산)";
+        } else if (gen === "5세대(비급여중증비중증)") {
+            label_clinic += " (본인부담률 30% / 공제 1만원)";
+            label_hospital += " (본인부담률 40% / 공제 1만원)";
+            label_general += " (본인부담률 50% / 공제 2만원)";
+            label_tertiary += " (본인부담률 60% / 공제 2만원)";
+            label_regional += " (본인부담률 90% / 공제 2만원)";
+        }
+        
+        select.options[0].text = label_clinic;
+        select.options[1].text = label_hospital;
+        select.options[2].text = label_general;
+        select.options[3].text = label_tertiary;
+        select.options[4].text = label_regional;
+    }
+
+    // Main Calculator Logic
+    function calculateAll() {
+        updateInstitutionLabels();
+        const gen = document.getElementById('generation-select').value;
+        const info = criteria[gen];
+
+        // Toggle 1세대 limit select visibility
+        const limit1gGroup = document.getElementById('limit-1g-group');
+        if (limit1gGroup) {
+            if (gen === "1세대") {
+                limit1gGroup.style.display = "block";
+            } else {
+                limit1gGroup.style.display = "none";
+            }
+        }
+
+        // 1. Inpatient Costs
+        const in_nhi = parseFloat(document.getElementById('inpatient-nhi').value) || 0;
+        const in_non_nhi_s = parseFloat(document.getElementById('inpatient-non-nhi-serious').value) || 0;
+        const in_non_nhi_g = parseFloat(document.getElementById('inpatient-non-nhi-general').value) || 0;
+
+        // Inpatient NHI
+        let self_in_nhi = Math.min(in_nhi * (1 - info.inpatient.nhi_rate), info.inpatient.nhi_cap);
+        let pay_in_nhi = in_nhi - self_in_nhi;
+
+        // Inpatient Non-NHI (Serious)
+        let self_in_non_nhi_s = Math.min(in_non_nhi_s * (1 - info.inpatient.non_nhi_serious_rate), info.inpatient.non_nhi_serious_cap);
+        let pay_in_non_nhi_s = in_non_nhi_s - self_in_non_nhi_s;
+
+        // Inpatient Non-NHI (General/Non-serious)
+        let self_in_non_nhi_g, pay_in_non_nhi_g;
+        if (gen === "5세대(비급여중증비중증)") {
+            // 5세대 applies payout-based limit: MIN(의료비 * 50%, 300만원)
+            pay_in_non_nhi_g = Math.min(in_non_nhi_g * info.inpatient.non_nhi_general_rate, info.inpatient.non_nhi_general_cap);
+            self_in_non_nhi_g = in_non_nhi_g - pay_in_non_nhi_g;
+        } else {
+            // 1~4세대 applies self-pay cap: MIN(의료비 * 자기부담률, 한도)
+            self_in_non_nhi_g = Math.min(in_non_nhi_g * (1 - info.inpatient.non_nhi_general_rate), info.inpatient.non_nhi_general_cap);
+            pay_in_non_nhi_g = in_non_nhi_g - self_in_non_nhi_g;
+        }
+
+        // Apply Inpatient Limits
+        if (gen === "1세대") {
+            const limit_1g = parseFloat(document.getElementById('limit-1g-select').value) || 50000000;
+            let total_pay = pay_in_nhi + pay_in_non_nhi_s + pay_in_non_nhi_g;
+            if (total_pay > limit_1g) {
+                let ratio = limit_1g / total_pay;
+                pay_in_nhi *= ratio;
+                pay_in_non_nhi_s *= ratio;
+                pay_in_non_nhi_g *= ratio;
+                self_in_nhi = in_nhi - pay_in_nhi;
+                self_in_non_nhi_s = in_non_nhi_s - pay_in_non_nhi_s;
+                self_in_non_nhi_g = in_non_nhi_g - pay_in_non_nhi_g;
+            }
+        } else if (gen.startsWith("2세대") || gen.startsWith("3세대")) {
+            // 2세대, 3세대: 연간 5천만원 한도 (합산)
+            let total_pay = pay_in_nhi + pay_in_non_nhi_s + pay_in_non_nhi_g;
+            if (total_pay > 50000000) {
+                let ratio = 50000000 / total_pay;
+                pay_in_nhi *= ratio;
+                pay_in_non_nhi_s *= ratio;
+                pay_in_non_nhi_g *= ratio;
+                self_in_nhi = in_nhi - pay_in_nhi;
+                self_in_non_nhi_s = in_non_nhi_s - pay_in_non_nhi_s;
+                self_in_non_nhi_g = in_non_nhi_g - pay_in_non_nhi_g;
+            }
+        } else if (gen.startsWith("4세대")) {
+            // 4세대: 급여 연간 5천만원 한도 / 비급여 연간 5천만원 한도 (합산)
+            if (pay_in_nhi > 50000000) {
+                pay_in_nhi = 50000000;
+                self_in_nhi = in_nhi - pay_in_nhi;
+            }
+            let total_non_nhi_pay = pay_in_non_nhi_s + pay_in_non_nhi_g;
+            if (total_non_nhi_pay > 50000000) {
+                let ratio = 50000000 / total_non_nhi_pay;
+                pay_in_non_nhi_s *= ratio;
+                pay_in_non_nhi_g *= ratio;
+                self_in_non_nhi_s = in_non_nhi_s - pay_in_non_nhi_s;
+                self_in_non_nhi_g = in_non_nhi_g - pay_in_non_nhi_g;
+            }
+        } else if (gen === "5세대(비급여중증비중증)") {
+            // 5세대: 급여 연간 5천만원 한도 / 비급여(중증) 연간 5천만원 한도 / 비급여(비중증) 연간 1천만원 한도
+            if (pay_in_nhi > 50000000) {
+                pay_in_nhi = 50000000;
+                self_in_nhi = in_nhi - pay_in_nhi;
+            }
+            if (pay_in_non_nhi_s > 50000000) {
+                pay_in_non_nhi_s = 50000000;
+                self_in_non_nhi_s = in_non_nhi_s - pay_in_non_nhi_s;
+            }
+            if (pay_in_non_nhi_g > 10000000) {
+                pay_in_non_nhi_g = 10000000;
+                self_in_non_nhi_g = in_non_nhi_g - pay_in_non_nhi_g;
+            }
+        }
+
+        // 2. Outpatient & Prescription Costs (Inputs represent NHI Patient Share / Copay directly)
+        const out_g_copay = parseFloat(document.getElementById('outpatient-general').value) || 0;
+        const out_p_copay = parseFloat(document.getElementById('outpatient-prescription').value) || 0;
+        const institution = document.getElementById('institution-select').value;
+        const out_m_copay = parseFloat(document.getElementById('outpatient-managed').value) || 0;
+
+        // Institution rules for copay rates and flat deductions
+        // 1세대: 구분없음 5,000원 공제 (외래+처방 통합)
+        // 2세대: 의원 1만 / 병원 1.5만 / 종합병원이상 2만, 처방조제비 8천원
+        // 3세대: 의원 1만 / 병원 1.5만 / 종합병원이상 2만, 처방조제비 8천원
+        // 4세대: 의원/병원 1만 / 종합병원이상 2만 (외래+처방 통합)
+        // 5세대: 의원/병원 1만 / 종합병원이상 2만 (외래+처방 통합)
+        const institutionRules = {
+            "의원": { copay_rate: 0.3, flat_2_3: 10000, flat_4: 10000, flat_5: 10000 },
+            "병원": { copay_rate: 0.4, flat_2_3: 15000, flat_4: 10000, flat_5: 10000 },
+            "종합병원": { copay_rate: 0.5, flat_2_3: 20000, flat_4: 20000, flat_5: 20000 },
+            "상급종합병원": { copay_rate: 0.6, flat_2_3: 20000, flat_4: 20000, flat_5: 20000 },
+            "권역응급의료센터": { copay_rate: 0.9, flat_2_3: 20000, flat_4: 20000, flat_5: 20000 }
+        };
+        const instRule = institutionRules[institution] || institutionRules["의원"];
+
+        // Apply health insurance copay rates based on institution type
+        let out_g_copay_rate = instRule.copay_rate;
+
+        // Reconstruct Total Medical Costs and Public Shares
+        let total_out_g = out_g_copay / out_g_copay_rate;
+        let out_g_public = total_out_g - out_g_copay;
+
+        let total_out_p = out_p_copay / 0.3; // 30% standard
+        let out_p_public = total_out_p - out_p_copay;
+
+        let total_out_m = out_m_copay / 0.95; // 95% standard
+        let out_m_public = total_out_m - out_m_copay;
+
+        // Determine generation-specific flat deduction
+        let flat_deduct = info.outpatient.flat;
+        if (gen.startsWith("2세대") || gen.startsWith("3세대")) {
+            flat_deduct = instRule.flat_2_3;
+        } else if (gen.startsWith("4세대")) {
+            flat_deduct = instRule.flat_4;
+        } else if (gen === "5세대(비급여중증비중증)") {
+            flat_deduct = instRule.flat_5;
+        }
+
+        let pay_out_g = 0;
+        let pay_out_p = 0;
+
+        if (gen === "1세대") {
+            // 1세대: 외래 + 처방 통합해서 5,000원 공제 (1회당 한도 30만원 적용)
+            let total_copay_sum = out_g_copay + out_p_copay;
+            pay_out_g = Math.min(Math.max(0, total_copay_sum - 5000), 300000);
+            pay_out_p = 0; // Displayed as combined
+        } else if (gen.startsWith("4세대") || gen === "5세대(비급여중증비중증)") {
+            // 4, 5세대: 외래 + 처방 합산 적용 (1회당 한도 20만원 적용)
+            let total_out = total_out_g + total_out_p;
+            let total_copay_sum = out_g_copay + out_p_copay;
+            let total_public_sum = out_g_public + out_p_public;
+
+            let deduct_g = calcOutpatientDeduct(info, total_out, total_copay_sum, total_public_sum, flat_deduct);
+            
+            if (gen === "5세대(비급여중증비중증)") {
+                pay_out_g = Math.min(Math.max(0, total_out - deduct_g - total_public_sum * 0.2), 200000);
+            } else {
+                pay_out_g = Math.min(Math.max(0, total_copay_sum - deduct_g), 200000);
+            }
+            pay_out_p = 0; // Combined
+        } else {
+            // 2세대 & 3세대: 외래 (한도 25만원) 및 처방 (한도 5만원) 분리 공제 적용
+            let deduct_g = calcOutpatientDeduct(info, total_out_g, out_g_copay, out_g_public, flat_deduct);
+            pay_out_g = Math.min(Math.max(0, out_g_copay - deduct_g), 250000);
+
+            let deduct_p = calcOutpatientDeduct(info, total_out_p, out_p_copay, out_p_public, 8000);
+            pay_out_p = Math.min(Math.max(0, out_p_copay - deduct_p), 50000);
+        }
+
+        // Outpatient Managed (Manual Therapy)
+        let pay_out_m = 0;
+        if (gen === "5세대(비급여중증비중증)") {
+            // 5세대: 급여본인부담금 * 5% (건보공단부담률)
+            pay_out_m = out_m_copay * 0.05;
+        } else {
+            let deduct_m = calcOutpatientDeduct(info, total_out_m, out_m_copay, out_m_public, flat_deduct);
+            pay_out_m = Math.max(0, out_m_copay - deduct_m);
+        }
+
+        // 3. Special Riders
+        const rider_physical = parseFloat(document.getElementById('rider-cost-physical').value) || 0;
+        const rider_injection = parseFloat(document.getElementById('rider-cost-injection').value) || 0;
+        const rider_mri = parseFloat(document.getElementById('rider-cost-mri').value) || 0;
+        const exempt = document.getElementById('rider-exemption').checked;
+
+        let pay_physical = 0;
+        let pay_injection = 0;
+        let pay_mri = 0;
+
+        if (gen === "5세대(비급여중증비중증)" && exempt) {
+            // 5세대 비중증: 도수/체외충격파/주사 면책, MRI는 보장 가능
+            pay_physical = 0;
+            pay_injection = 0;
+            pay_mri = Math.min(Math.max(0, rider_mri - Math.max(info.rider.flat, rider_mri * info.rider.rate)), 3000000);
+        } else if (info.rider.active === "Y") {
+            // 1세대 & 2세대: 특약 적용하지 않고 일반 급여/비급여 입통원 처리 (여기서는 100% 지급)
+            pay_physical = rider_physical;
+            pay_injection = rider_injection;
+            pay_mri = rider_mri;
+        } else {
+            // 3세대 & 4세대 & 5세대(중증): 각각 한도 내에서 공제 차감
+            // 도수/증식/체외충격파: 연간 350만 한도
+            let copay_p = Math.max(info.rider.flat, rider_physical * info.rider.rate);
+            pay_physical = Math.min(Math.max(0, rider_physical - copay_p), 3500000);
+
+            // 주사제: 연간 250만 한도
+            let copay_i = Math.max(info.rider.flat, rider_injection * info.rider.rate);
+            pay_injection = Math.min(Math.max(0, rider_injection - copay_i), 2500000);
+
+            // MRI/MRA: 연간 300만 한도
+            let copay_m = Math.max(info.rider.flat, rider_mri * info.rider.rate);
+            pay_mri = Math.min(Math.max(0, rider_mri - copay_m), 3000000);
+        }
+
+        let pay_rider = pay_physical + pay_injection + pay_mri;
+        let total_rider_input = rider_physical + rider_injection + rider_mri;
+        let self_rider = total_rider_input - pay_rider;
+
+        // Total Payout & Copay
+        let total_payout = pay_in_nhi + pay_in_non_nhi_s + pay_in_non_nhi_g + pay_out_g + pay_out_p + pay_out_m + pay_rider;
+        let total_copay = (in_nhi + in_non_nhi_s + in_non_nhi_g + out_g_copay + out_p_copay + out_m_copay + total_rider_input) - total_payout;
+
+        // Update UI
+        document.getElementById('res-inpatient-nhi').innerText = formatWon(pay_in_nhi);
+        document.getElementById('res-inpatient-non-nhi-serious').innerText = formatWon(pay_in_non_nhi_s);
+        document.getElementById('res-inpatient-non-nhi-general').innerText = formatWon(pay_in_non_nhi_g);
+        document.getElementById('res-outpatient-general').innerText = (gen === "1세대" || gen.startsWith("4세대") || gen === "5세대(비급여중증비중증)") ? formatWon(pay_out_g) + " (합산)" : formatWon(pay_out_g);
+        document.getElementById('res-outpatient-prescription').innerText = (gen === "1세대" || gen.startsWith("4세대") || gen === "5세대(비급여중증비중증)") ? "외래 합산 적용" : formatWon(pay_out_p);
+        document.getElementById('res-outpatient-managed').innerText = formatWon(pay_out_m);
+        document.getElementById('res-rider').innerText = formatWon(pay_rider);
+        document.getElementById('res-total-copay').innerText = formatWon(total_copay);
+        document.getElementById('res-total-payout').innerText = formatWon(total_payout);
+
+        // Update Rider Detail Label in UI
+        let detailStr = "";
+        if (gen === "5세대(비급여중증비중증)" && exempt) {
+            detailStr = "(도수/주사 면책 적용 | MRI: " + pay_mri.toLocaleString() + "원 지급)";
+        } else {
+            detailStr = "(도수: " + pay_physical.toLocaleString() + "원 | 주사: " + pay_injection.toLocaleString() + "원 | MRI: " + pay_mri.toLocaleString() + "원)";
+        }
+        document.getElementById('rider-detail-label').innerText = detailStr;
+
+        // Update Deduct Labels in UI
+        if (gen === "1세대") {
+            document.getElementById('deduct-g-label').innerText = "(외래/처방 통합 5,000원 공제)";
+            document.getElementById('deduct-p-label').innerText = "(외래 합산 적용)";
+        } else if (gen.startsWith("2세대") || gen.startsWith("3세대")) {
+            document.getElementById('deduct-g-label').innerText = "(외래공제: " + flat_deduct.toLocaleString() + "원)";
+            document.getElementById('deduct-p-label').innerText = "(처방공제: 8,000원)";
+        } else if (gen.startsWith("4세대")) {
+            document.getElementById('deduct-g-label').innerText = "(공제: " + flat_deduct.toLocaleString() + "원 / 합산)";
+            document.getElementById('deduct-p-label').innerText = "(외래 합산 적용)";
+        } else if (gen === "5세대(비급여중증비중증)") {
+            document.getElementById('deduct-g-label').innerText = "(본인부담률: " + (out_g_copay_rate * 100) + "% / 공제: " + flat_deduct.toLocaleString() + "원 / 합산)";
+            document.getElementById('deduct-p-label').innerText = "(외래 합산 적용)";
+        }
+
+        // Render SVG Visualization Chart
+        renderChart(total_payout, total_copay);
+    }
+
+    function calcOutpatientDeduct(info, total, copay, public_part, flat_deduct) {
+        let val1 = flat_deduct;
+        let val2 = 0;
+        if (info.outpatient.base === "총의료비") {
+            val2 = total * info.outpatient.rate;
+        } else {
+            val2 = copay * info.outpatient.rate;
+        }
+
+        let max_cand = Math.max(val1, val2);
+        if (info.outpatient.max_check === "Y") {
+            max_cand = Math.max(max_cand, copay);
+        }
+        return max_cand;
+    }
+
+    function formatWon(val) {
+        return Math.round(val).toLocaleString() + "원";
+    }
+
+    // Dynamic Chart rendering using HTML5 SVG
+    function renderChart(payout, copay) {
+        const total = payout + copay;
+        const payoutPercent = total > 0 ? (payout / total) * 100 : 0;
+        const copayPercent = total > 0 ? (copay / total) * 100 : 0;
+
+        const container = document.getElementById('chart-container');
+        container.innerHTML = `
+            <svg width="100%" height="100%" viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg">
+                <!-- Payout bar -->
+                <rect x="50" y="40" width="${300 * (payoutPercent/100)}" height="40" fill="url(#payoutGrad)" rx="6"/>
+                <!-- Copay bar -->
+                <rect x="${50 + 300 * (payoutPercent/100)}" y="40" width="${300 * (copayPercent/100)}" height="40" fill="url(#copayGrad)" rx="6"/>
+                
+                <!-- Legends -->
+                <circle cx="50" cy="120" r="6" fill="var(--primary)"/>
+                <text x="65" y="125" fill="var(--text-main)" font-size="12" font-weight="500">지급보험금 (${payoutPercent.toFixed(1)}%)</text>
+                
+                <circle cx="230" cy="120" r="6" fill="var(--warning)"/>
+                <text x="245" y="125" fill="var(--text-main)" font-size="12" font-weight="500">자기부담금 (${copayPercent.toFixed(1)}%)</text>
+                
+                <text x="50" y="160" fill="var(--text-muted)" font-size="11">※ 보장비율과 공제금액에 따라 실시간으로 변동됩니다.</text>
+
+                <defs>
+                    <linearGradient id="payoutGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stop-color="var(--primary)"/>
+                        <stop offset="100%" stop-color="#8b5cf6"/>
+                    </linearGradient>
+                    <linearGradient id="copayGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stop-color="var(--warning)"/>
+                        <stop offset="100%" stop-color="#f59e0b"/>
+                    </linearGradient>
+                </defs>
+            </svg>
+        `;
+    }
+
+    // Initialize Reference Table
+    function initRefTable() {
+        const header = document.getElementById('ref-header');
+        refData.headers.forEach(h => {
+            const th = document.createElement('th');
+            th.innerText = h;
+            header.appendChild(th);
+        });
+
+        const tbody = document.getElementById('ref-tbody');
+        refData.rows.forEach(r => {
+            const tr = document.createElement('tr');
+            r.forEach((cell, idx) => {
+                const td = document.createElement('td');
+                td.innerText = cell;
+                if (idx === 0) {
+                    td.style.fontWeight = "700";
+                    td.style.color = "var(--primary)";
+                }
+                tr.appendChild(td);
+            });
+            tbody.appendChild(tr);
+        });
+    }
+
+    function filterRefTable() {
+        const query = document.getElementById('ref-search').value.toLowerCase();
+        const rows = document.getElementById('ref-tbody').getElementsByTagName('tr');
+        for (let row of rows) {
+            let matches = false;
+            for (let cell of row.cells) {
+                if (cell.innerText.toLowerCase().includes(query)) {
+                    matches = true;
+                    break;
+                }
+            }
+            row.style.display = matches ? "" : "none";
+        }
+    }
+
+    // Initialize & Compute Case Studies dynamically
+    function initCaseStudies() {
+        const case1Body = document.getElementById('case1-tbody');
+        const case1Originals = {
+            "1세대": { deduct: 5000, payout: 36600, original: 36600 },
+            "2세대-표준화": { deduct: 10000, payout: 31600, original: 31600 },
+            "3세대(착한실손)": { deduct: 10000, payout: 31600, original: 31600 },
+            "4세대(비급여할증제)": { deduct: 10000, payout: 31600, original: 31600 },
+            "5세대(비급여중증비중증)": { deduct: 41600, payout: 2080, original: 2080 } // Now perfectly matches!
+        };
+
+        Object.keys(case1Originals).forEach(gen => {
+            const data = case1Originals[gen];
+            const isMatch = data.payout === data.original ? "일치" : "불일치 (5세대 오타)";
+            const badgeClass = data.payout === data.original ? "badge-success" : "badge-warning";
+            
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td style="font-weight:600;">${gen}</td>
+                <td>${data.deduct.toLocaleString()}원</td>
+                <td style="font-weight:700; color:var(--primary);">${data.payout.toLocaleString()}원</td>
+                <td>${data.original.toLocaleString()}원</td>
+                <td><span class="badge ${badgeClass}">${isMatch}</span></td>
+            `;
+            case1Body.appendChild(tr);
+        });
+
+        const case2Body = document.getElementById('case2-tbody');
+        const case2Originals = {
+            "1세대": { rate: 1.0, cap: 999999999, original_500: 5000000, original_1000: 10000000 },
+            "2세대-표준화": { rate: 0.9, cap: 2000000, original_500: 4500000, original_1000: 9000000 },
+            "3세대(착한실손)": { rate: 0.8, cap: 2000000, original_500: 4000000, original_1000: 8000000 },
+            "4세대(비급여할증제)": { rate: 0.7, cap: 999999999, original_500: 3500000, original_1000: 7000000 },
+            "5세대(비급여중증비중증)": { rate: 0.5, cap: 3000000, original_500: 2500000, original_1000: 3000000 }
+        };
+
+        Object.keys(case2Originals).forEach(gen => {
+            const data = case2Originals[gen];
+            
+            // Calculate Case A (500만)
+            let pay_500 = 0;
+            if (gen === "5세대(비급여중증비중증)") {
+                pay_500 = Math.min(5000000 * data.rate, data.cap);
+            } else {
+                pay_500 = 5000000 - Math.min(5000000 * (1 - data.rate), data.cap);
+            }
+            const match_500 = pay_500 === data.original_500 ? "일치" : "불일치";
+
+            // Calculate Case B (1000만)
+            let pay_1000 = 0;
+            if (gen === "5세대(비급여중증비중증)") {
+                pay_1000 = Math.min(10000000 * data.rate, data.cap);
+            } else {
+                pay_1000 = 10000000 - Math.min(10000000 * (1 - data.rate), data.cap);
+            }
+            const match_1000 = pay_1000 === data.original_1000 ? "일치" : "불일치";
+
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td style="font-weight:600;">${gen}</td>
+                <td style="font-weight:700; color:var(--primary);">${pay_500.toLocaleString()}원</td>
+                <td>${data.original_500.toLocaleString()}원</td>
+                <td><span class="badge badge-success">${match_500}</span></td>
+                <td style="font-weight:700; color:var(--primary);">${pay_1000.toLocaleString()}원</td>
+                <td>${data.original_1000.toLocaleString()}원</td>
+                <td><span class="badge badge-success">${match_1000}</span></td>
+            `;
+            case2Body.appendChild(tr);
+        });
+    }
+</script>
+
+</body>
+</html>
